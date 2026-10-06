@@ -14,6 +14,21 @@
 	<h1>
 	Interaktive Kürbisrotation 15 Grad
 	</h1>
+<img id="grafik"src="Bilder/kuerbis_0.png" alt="Interaktiv animierter Kürbis">
+<div class="info-box">
+<h2> So drehst du den Kürbis</h2>
+<ul>
+<li> Taste 'r' dreht den Kürbis 15 Grad nach rechts
+	</li>
+<li> Taste 'l'dreht den Kürbis 15 Grad nach links
+	</li>
+<li> Taste 'a'startet und stoppt den Kürbis automatisch
+	</li>
+</ul>
+<h3>
+Bild ist selbst gemalt
+</h3>
+</div>
 
 </body>
 </html>
