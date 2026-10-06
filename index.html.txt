@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+< html lang "de">
+<head>
+	<meta charset="UTF-8">
+	<title> Interaktiv animierter Kürbis
+	</title>
+	<style>
+	body {font-family: arial; text-aligne: Center; margin-top: 45px;}
+	#kuerbis { width: 200px; height:200px;}
+	.info-box {margin-top: 30px; padding: 15px; border: 1px solid #767676; Display: inline-block; text-align: left;}
+	</style>
+</head>
+<body>
+	<h1>
+	Interaktive Kürbisrotation 15 Grad
+	</h1>
