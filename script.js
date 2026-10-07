@@ -1,31 +1,10 @@
 
 const frames = [
-  'Bilder/kuerbis_0.png
-  'Bilder/kuerbis_1.png
-  'Bilder/kuerbis_2.png
-  'Bilder/kuerbis_3.png
-  'Bilder/kuerbis_4.png
-  'Bilder/kuerbis_5.png
-  'Bilder/kuerbis_6.png
-  'Bilder/kuerbis_7.png
-  'Bilder/kuerbis_8.png
-  'Bilder/kuerbis_9.png
-  'Bilder/kuerbis_10.png
-  'Bilder/kuerbis_11.png
-  'Bilder/kuerbis_12png
-  'Bilder/kuerbis_13.png
-  'Bilder/kuerbis_14.png
-  'Bilder/kuerbis_15.png
-  'Bilder/kuerbis_16.png
-  'Bilder/kuerbis_17.png
-  'Bilder/kuerbis_18.png
-  'Bilder/kuerbis_19.png
-  'Bilder/kuerbis_20.png
-  'Bilder/kuerbis_21.png
-  'Bilder/kuerbis_22.png
-  'Bilder/kuerbis_23.png
-  'Bilder/kuerbis_24.png
-  'Bilder/kuerbis_25.png
+  'Bilder/kuerbis_0.png',
+  'Bilder/kuerbis_1.png',
+  'Bilder/kuerbis_2.png',
+  'Bilder/kuerbis_3.png',
+
 ];
 let currentIndex = 0;
 let autoAnimationInterval = null;
