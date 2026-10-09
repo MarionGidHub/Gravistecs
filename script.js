@@ -64,15 +64,16 @@ window.addEventListener('keydown', (event) => {
     toggleAutoRotate();
   }
 });
-const geistElem=document.GetElementById ('geist');
+const geistElem=document.getElementById ('geist');
   const totalGeistFrames = 4;
   const geistFrameWidth = 150;
   let geistCurrentFrame = 0;
   function animateGeist (){
     geistCurrentFrame = (geistCurrentFrame +1) % totalGeistFrames;
     const xPos = -(geistCurrentFrame * geistFrameWidth); if (geistElem){
-      geist.Elem.style.backgroundPosition = '${xPos}px 0px';
+      geistElem.style.backgroundPosition = `${xPos}px 0px`;
+     
     }
   }
-
+ setInterval(animateGeist, 150);
 
