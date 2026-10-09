@@ -64,7 +64,6 @@ window.addEventListener('keydown', (event) => {
     toggleAutoRotate();
   }
 });
-```
 
 
 
