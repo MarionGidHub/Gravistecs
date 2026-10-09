@@ -12,7 +12,12 @@
 	#geist{ width: 64px; height:64px; background-image:url('Bilder/geist.png');
 		  background-repeat: no-repeat;
 		  background-size: 256px 64px;
-		  margin:20px auto;}
+		  margin:20px auto;
+		  animation: geistSchweben 0.8s steps(4) infinite;
+		  }
+		@keyframes geistSchweben {
+			from {background-position: 0px 0px;} to {background-position: -256px 0px;}
+		}
 	</style>
 </head>
 <body>
