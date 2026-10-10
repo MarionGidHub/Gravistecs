@@ -1,48 +1,167 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="de">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport"content="width=device-width, initial-scale=1.0">
-	<title> Interaktiv animierter Kürbis
-	</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Interaktiv animierter Kürbis</title>
 	<style>
-	body {font-family: Arial; text-align: center; margin-top: 45px; background-color: #000;}
-		h1 {color: #F28500;}
-	#kuerbis { width: 200px; height:200px;}
-	.info-box {margin-top: 30px; padding: 15px; border: 1px solid #767676; background-color: #F28500; display: inline-block; text-align: left;}
-	#geist{ width: 64px; height:64px; background-image:url('Bilder/geist.png');
-		  background-repeat: no-repeat;
-		  background-size: 256px 64px;
-		  margin:20px auto;
-		  animation: geistSchweben 0.8s steps(4) infinite;
-		  }
+		body { 
+			font-family: Arial, sans-serif; 
+			text-align: center; 
+			margin-top: 45px; 
+			background-color: #000;
+			color: #ffffff;
+		}
+
+		h1 {
+			color: #F28500;
+		}
+
+		/* --- Rahmen um den Kürbis --- */
+		.kuerbis-rahmen {
+			position: relative;
+			display: inline-block;
+			padding: 30px;
+			margin: 20px auto;
+		}
+
+		#kuerbis { 
+			width: 200px; 
+			height: 200px;
+			display: block;
+		}
+
+		.ecke {
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			z-index: 2;
+		}
+		
+		.top-left     { top: 0; left: 0; }
+		.top-right    { top: 0; right: 0; transform: rotate(90deg); }
+		.bottom-right { bottom: 0; right: 0; transform: rotate(180deg); }
+		.bottom-left  { bottom: 0; left: 0; transform: rotate(270deg); }
+
+		.kante {
+			position: absolute;
+			z-index: 1;
+		}
+		.kante-top {
+			top: 0; left: 30px; right: 30px; height: 30px;
+			background: url('Bilder/kante.png') repeat-x;
+		}
+		.kante-bottom {
+			bottom: 0; left: 30px; right: 30px; height: 30px;
+			background: url('Bilder/kante.png') repeat-x;
+			transform: rotate(180deg);
+		}
+		.kante-left {
+			top: 30px; bottom: 30px; left: 0; width: 30px;
+			background: url('Bilder/kante.png') repeat-y;
+			transform: rotate(270deg);
+		}
+		.kante-right {
+			top: 30px; bottom: 30px; right: 0; width: 30px;
+			background: url('Bilder/kante.png') repeat-y;
+			transform: rotate(90deg);
+		}
+
+		.info-box {
+			margin-top: 30px; 
+			padding: 15px; 
+			border: 1px solid #767676; 
+			background-color: #F28500; 
+			color: #000000;
+			display: inline-block; 
+			text-align: left;
+		}
+
+	
+		.touch-controls {
+			display: flex;
+			justify-content: center;
+			gap: 15px;
+			margin: 25px auto;
+		}
+
+		.touch-btn {
+			width: 60px;
+			height: 60px;
+			background-color: #F28500;
+			color: #000000;
+			border: none;
+			border-radius: 12px;
+			font-size: 22px;
+			font-weight: bold;
+			cursor: pointer;
+			box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+			user-select: none;
+			touch-action: manipulation;
+		}
+
+		.touch-btn:active {
+			transform: scale(0.95);
+			background-color: #d67400;
+		}
+
+		
+		#geist { 
+			width: 64px; 
+			height: 64px; 
+			background-image: url('Bilder/geist.png');
+			background-repeat: no-repeat;
+			background-size: 256px 64px;
+			margin: 20px auto;
+			animation: geistSchweben 0.8s steps(4) infinite;
+		}
+
 		@keyframes geistSchweben {
-			from {background-position: 0px 0px;} to {background-position: -256px 0px;}
+			from { background-position: 0px 0px; }
+			to { background-position: -256px 0px; }
 		}
 	</style>
 </head>
 <body>
-	<h1>
-	Interaktive Kürbisrotation 15 Grad
-	</h1>
-<img id="kuerbis"src="Bilder/kuerbis_0.png" alt="Interaktiv animierter Kürbis">
-<div class="info-box">
-<h2> So drehst du den Kürbis</h2>
-<ul>
-<li> Taste 'r' dreht den Kürbis 15 Grad nach rechts
-	</li>
-<li> Taste 'l' dreht den Kürbis 15 Grad nach links
-	</li>
-<li> Taste 'a'startet und stoppt den Kürbis automatisch
-	</li>
-	<li> Bild ist selbst gemalt
-	</li>
-</ul>
-</div>
 
-	<div id="geist">
-		
+	<h1>Interaktive Kürbisrotation 15 Grad</h1>
+
+	<!-- Kürbis mit Rahmen -->
+	<div class="kuerbis-rahmen">
+		<img src="Bilder/ecke.png" class="ecke top-left" alt="">
+		<img src="Bilder/ecke.png" class="ecke top-right" alt="">
+		<img src="Bilder/ecke.png" class="ecke bottom-right" alt="">
+		<img src="Bilder/ecke.png" class="ecke bottom-left" alt="">
+
+		<div class="kante kante-top"></div>
+		<div class="kante kante-bottom"></div>
+		<div class="kante kante-left"></div>
+		<div class="kante kante-right"></div>
+
+		<img id="kuerbis" src="Bilder/kuerbis_1.png" alt="Interaktiv animierter Kürbis">
 	</div>
+
+	<br>
+
+	<div class="touch-controls">
+		<button class="touch-btn" onclick="rotateLeft()">L</button>
+		<button class="touch-btn" onclick="toggleAutoRotate()">A</button>
+		<button class="touch-btn" onclick="rotateRight()">R</button>
+	</div>
+	
+	<div class="info-box">
+		<h2>So drehst du den Kürbis</h2>
+		<ul>
+			<li>Taste 'r'dreht den Kürbis 15 Grad nach rechts</li>
+			<li>Taste 'l' dreht den Kürbis 15 Grad nach links</li>
+			<li>Taste 'a' der Kürbis startez und stoppt automatisch</li>
+			<li>Oder nutze die orangen Buttons, wenn du am Handy bist. </li>
+			<li>Bild ist selbst gemalt</li>
+		</ul>
+	</div>
+	
+	<div id="geist"></div>
+
 	<script src="script.js"></script>
 </body>
 </html>
