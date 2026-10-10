@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-< html lang="de">
+<html lang="de">
 <head>
 	<meta charset="UTF-8">
-	<meta name='viewport'content="width=device-width, inital-scale=1.0">
+	<meta name="viewport"content="width=device-width, initial-scale=1.0">
 	<title> Interaktiv animierter Kürbis
 	</title>
 	<style>
-	body {font-family: Arial; text-align: center; margin-top: 45px;}
+	body {font-family: Arial; text-align: center; margin-top: 45px; background-color: #000;}
 	#kuerbis { width: 200px; height:200px;}
-	.info-box {margin-top: 30px; padding: 15px; border: 1px solid #767676; Display: inline-block; text-align: left;}
+	.info-box {margin-top: 30px; padding: 15px; border: 1px solid #767676; background-color: #F28500; display: inline-block; text-align: left;}
+	#geist{ width: 64px; height:64px; background-image:url('Bilder/geist.png');
+		  background-repeat: no-repeat;
+		  background-size: 256px 64px;
+		  margin:20px auto;
+		  animation: geistSchweben 0.8s steps(4) infinite;
+		  }
+		@keyframes geistSchweben {
+			from {background-position: 0px 0px;} to {background-position: -256px 0px;}
+		}
 	</style>
 </head>
 <body>
-	<h1>
+	<h1  color: #767676;>
 	Interaktive Kürbisrotation 15 Grad
 	</h1>
 <img id="kuerbis"src="Bilder/kuerbis_0.png" alt="Interaktiv animierter Kürbis">
@@ -29,6 +38,10 @@
 	</li>
 </ul>
 </div>
-<script src="script.js"></script>
+
+	<div id="geist">
+		
+	</div>
+	<script src="script.js"></script>
 </body>
 </html>
