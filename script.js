@@ -26,30 +26,32 @@ const frames = [
   
 ];
 
-let currentIndex = 0;
-let autoAnimationInterval = null;
-const kuerbisImg = document.getElementById('kuerbis');
+let currentIndex = 0; //Variable zähler definiert
+let autoAnimationInterval = null; //Variable Timer definiert
+const kuerbisImg = document.getElementById('kuerbis'); // Konstante Bildobjekt definiert
 
+//Funktion holt aktuellen Bild
 function updateFrame() {
   kuerbisImg.src = frames[currentIndex];
 }
 
+//Funktion dreht Bild rechts rum
 function rotateRight() {
   currentIndex = (currentIndex + 1) % frames.length;
   updateFrame();
 }
-
+//Funktion dreht Bild links rum
 function rotateLeft() {
   currentIndex = (currentIndex - 1 + frames.length) % frames.length;
   updateFrame();
 }
-
+// Funktion startet oder stoppt die automatische Drehung 
 function toggleAutoRotate() {
   if (autoAnimationInterval) {
     clearInterval(autoAnimationInterval);
     autoAnimationInterval = null;
   } else {
-    autoAnimationInterval = setInterval(rotateRight, 100);
+    autoAnimationInterval = setInterval(rotateRight, 90);
   }
 }
 
