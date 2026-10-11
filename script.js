@@ -1,4 +1,5 @@
 const frames = [
+  'Bilder/kuerbis_0.png',
   'Bilder/kuerbis_1.png',
   'Bilder/kuerbis_2.png',
   'Bilder/kuerbis_3.png',
@@ -22,7 +23,7 @@ const frames = [
   'Bilder/kuerbis_21.png',
   'Bilder/kuerbis_22.png',
   'Bilder/kuerbis_23.png',
-  'Bilder/kuerbis_24.png',
+  
 ];
 
 let currentIndex = 0;
