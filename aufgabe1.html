@@ -6,32 +6,38 @@
 	<title>Interaktiv animierter Kürbis</title>
 	<style>
 		body { 
-			color: #ffffff;
-			/*font-family: Arial, sans-serif; 
+			font-family: Arial, sans-serif; 
 			text-align: center; 
 			margin-top: 45px; 
-			background-color: #000;*/
-			
+			background-color: #000;
+			color: #ffffff;
 		}
 
 		h1 {
 			color: #F28500;
-			/*font-family: 'gondala';
-			//src: url('fonts/gondala/Gondola_SD-webfont.ttf)
-  //font-weight: normal;
-  //font-style: normal;
-  //font-display: swap;*/
+			
+  font-family: 'gondala';
+  src: url('fonts/gondala/Gondola_SD-webfont.ttf)
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 		}
 		p {color: #F28500;
 			
 		}
 
 		/* --- Rahmen um den Kürbis --- */
-		.neuer-rahmen {
+		.kuerbis-rahmen {
 			position: relative;
 			display: inline-block;
 			padding: 30px;
 			margin: 20px auto;
+		}
+
+		#kuerbis { 
+			width: 200px; 
+			height: 200px;
+			display: block;
 		}
 
 		.ecke {
@@ -75,7 +81,7 @@
 			margin-top: 30px; 
 			padding: 15px; 
 			border: 1px solid #767676; 
-			background-color: #222; 
+			background-color: #F28500; 
 			color: #000000;
 			display: inline-block; 
 			text-align: left;
@@ -106,19 +112,69 @@
 
 		.touch-btn:active {
 			transform: scale(0.95);
-			background-color: #666;
+			background-color: #d67400;
 		}
 
-	
+		
+		#geist { 
+			width: 64px; 
+			height: 64px; 
+			background-image: url('Bilder/geist.png');
+			background-repeat: no-repeat;
+			background-size: 256px 64px;
+			margin: 20px auto;
+			animation: geistSchweben 0.8s steps(4) infinite;
+		}
+
+		@keyframes geistSchweben {
+			from { background-position: 0px 0px; }
+			to { background-position: -256px 0px; }
+		}
 	</style>
 </head>
 <body>
 
-	<!-- Die Canvas-Info-Box -->
-<div style="margin: 20px auto; text-align: center;">
-    <h2>WebGL Prototyp</h2>
-    <canvas id="webglCanvas" width="400" height="400" style="background-color: #111; border: 2px solid #F28500;"></canvas>
-</div>
+	<h1>Interaktive Kürbisrotation 15 Grad</h1>
+ <p>Bitte finden Sie im folgenden den Prototyp von Aufgabe 1. 
+	 Ich werde in den Wochen bis zum Semesterende hin undwieder Änderungen vornehmen.
+	Da es zur Jahreszeit passt, nehme ich Halloween als Thema.
+		</p>
+	<!-- Kürbis mit Rahmen -->
+	<div class="kuerbis-rahmen">
+		<img src="Bilder/ecke.png" class="ecke top-left">
+		<img src="Bilder/ecke.png" class="ecke top-right">
+		<img src="Bilder/ecke.png" class="ecke bottom-right">
+		<img src="Bilder/ecke.png" class="ecke bottom-left">
 
+		<div class="kante kante-top"></div>
+		<div class="kante kante-bottom"></div>
+		<div class="kante kante-left"></div>
+		<div class="kante kante-right"></div>
+
+		<img id="kuerbis" src="Bilder/kuerbis_0.png" alt="Interaktiv animierter Kürbis">
+	</div>
+
+	<br>
+
+	<div class="touch-controls">
+		<button class="touch-btn" onclick="rotateLeft()">L</button>
+		<button class="touch-btn" onclick="toggleAutoRotate()">A</button>
+		<button class="touch-btn" onclick="rotateRight()">R</button>
+	</div>
+	
+	<div class="info-box">
+		<h2>So drehst du den Kürbis</h2>
+		<ul>
+			<li>Taste 'r' dreht den Kürbis 15 Grad nach rechts</li>
+			<li>Taste 'l' dreht den Kürbis 15 Grad nach links</li>
+			<li>Taste 'a' der Kürbis startez und stoppt automatisch</li>
+			<li>Oder nutze die orangen Buttons, wenn du am Handy bist. </li>
+			<li>Das Bild vom Kürbis hat meine Tochter erstellt. Der Geist ist von mir.</li>
+		</ul>
+	</div>
+	
+	<div id="geist"></div>
+
+	<script src="script.js"></script>
 </body>
 </html>
