@@ -16,30 +16,36 @@ div {
   width: 90%;           /* Das div braucht eine Breite, damit es zentriert werden kann */
   margin-left: auto;    /* Berechnet den linken Abstand automatisch */
   margin-right: auto;   /* Berechnet den rechten Abstand automatisch */
-}
-ul {
-  display: flex;       /* Richtet alle <li>-Elemente horizontal aus */
-  gap: 15px;           /* Erzeugt einen gleichmäßigen Abstand zwischen den Elementen */
-  list-style: none;    /* Entfernt die Aufzählungspunkte (optional) */
-  padding: 0;          /* Entfernt Standard-Abstände (optional) */
-}
+    }
+    ul {
+        display: flex;       /* Richtet alle <li>-Elemente horizontal aus */
+        list-style: none;    /* Entfernt die Aufzählungspunkte (optional) */
+        padding: 0;          /* Entfernt Standard-Abstände (optional) */
+        }
+        ol {
+            font-size: 22px;
+        }
     body {
 		
-			font-family: Arial, sans-serif; 
-			text-align: center; 
-			margin-top: 45px; 
-			background-color: #808080;
-			color: #ffffff; 
+	font-family: Arial, sans-serif; 
+	text-align: center; 
+	margin-top: 45px; 
+	background-color: #808080;
+	color: #ffffff; 
     }
-	table { 
-	margin-top:6px; margin-bottom:7px; border-collapse:collapse, background-color: #10484a; 
+    table { 
+    margin-top:6px; margin-bottom:7px; border-collapse:collapse; background-color: #10484a; 
 	}  
     td  {
-      background-color: #ace4e6;  color:#000; font-weight:bold;  padding: 10px; 
-  vertical-align: top; 
+      background-color: #ace4e6;  color:#000; font-weight:lighter;  padding: 10px; 
+  vertical-align: top; text-align: left;
     }
     hr { 
-    border:none; border-top:1px dashed; height:1px; color:#10484a; background:transparent
+    border:none; 
+    border-top:1px dashed; 
+    height:1px; 
+    color:#10484a; 
+    /*background:transparent*/
     }
         h1 {
     color:#10484a
@@ -47,6 +53,24 @@ ul {
     h2 {
     color:#10484a
     }
+    #metanavi {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    #logbuch {
+  color: black;        /* Macht den Text und die Nummern schwarz */
+  text-align: left;    /* Richtet den Text linksbündig aus */
+}
+#footer {
+    background-color:#dae6e4;        /* Macht den Text und die Nummern schwarz */
+    color:#000033;
+    text-align: left;
+    font-size: 9px;
+    
+}
   </style>
   
 </head>
@@ -64,98 +88,89 @@ ul {
     
 <div id="content">
 
-<div id="slideshow">
- 	<div>
-     <img src="bilder/Kaniszadreieck.png"/>
-   </div>
+<div>
+ 	
+<img src="bilder/Kaniszadreieck.png"/>
+   
 </div>
     
-    <div id="text">
-    <div class="Ueberschrift">
-  Marion W. - Aufgaben Grafical Visualisation Technics
-  	</div>
-            <div class="pullit1">
+    <div>
+    <div>Marion W. - Aufgaben Grafical Visualisation Technics</div>
+    <div>
             <h1>Portfolio zum Semester</h1>
-			<div id="metanavi">
-                <ul>    <button onclick="history.go(-1)">Aufgabe3</button>
-						<li><a href="aufgabe1.html" alt="Link zu Aufgabe 1">Aufgabe 1</a></li>
-                 		<li><a href="aufgabe2.html" alt="Link zu Aufgabe 2">Aufgabe 2</a></li>
+			<div >
+                <ul id="metanavi">
+			<li><a href="aufgabe1.html" alt="Link zu Aufgabe 1">Aufgabe 1</a></li>
+                 	<li><a href="aufgabe2.html" alt="Link zu Aufgabe 2">Aufgabe 2</a></li>
                 </ul>
             </div>
                 
-           	<div class="maske1">
-           	<hr>
+           	<div>
+                    <hr></hr>
             
             <h2>Bio</h2> 
             <hr>
             <table>
             	<tr>
-        			<td>1997-2001&nbsp;</td>
+        		<td>1997-2001&nbsp;</td>
             		<td>Ausbildung an der Werk-Kunstschule Lübeck</td>
-        		</tr>
+        	</tr>
             	<tr>
-        			<td>2004-2005</td>
+        		<td>2004-2005</td>
                 	<td>Realschulabschluss an der VHS Schwerin</td>
-        		</tr>
+        	</tr>
             	<tr>
-        			<td >2005-2007&nbsp;</td>
+        		<td >2005-2007&nbsp;</td>
                 	<td >Fachhochschulreife am Abendgymnasium Lübeck</td>
-        		</tr>
-				<tr class="zeile4">
-        			<td >2007&nbsp;</td>
+        	</tr>
+		<tr class="zeile4">
+        		<td >2007&nbsp;</td>
                 	<td >Geburt meiner ersten Tochter</td>
-        		</tr>
+        	</tr>
             	<tr>
-        			<td>2008-2012&nbsp;</td>
+        		<td>2008-2012&nbsp;</td>
                 	<td>Informationstechnologie und Design B.Sc. TH-Lübeck</td>
                 </tr>
                 <tr>
-        			<td>2012-2013&nbsp;</td>
+        		<td>2012-2013&nbsp;</td>
                 	<td>Masterstudiengang Medieninformatik TH-Lübeck</td>
                 </tr>
                    <tr>
-        			<td>2013 bis heute &nbsp;</td>
+        		<td>2013 bis heute &nbsp;</td>
                 	<td>Angestellte bei Drägerwerk AG Lübeck, mittlerweile als E-Learning Expert</td>
                 </tr>
-				<tr>
-        			<td>2021</td>
+		<tr>
+        		<td>2021</td>
                 	<td>Geburt meiner zweiten Tochter</td>
                 </tr>
          	</table>
-            <h2>Motivation</h2> 
-            <hr>
-            <p>Farbpicker: https://www.google.com/search?client=firefox-b-d&q=farbfinder+hex<br/>
-			</p>
-
-          	</div>
-           	</div>
-  
-         <div class="pullit2">
-        	<h1>Überschrift</h1>
-         <div class="maske2">
-                    
-         <hr style="border:none; border-top:1px dashed; height:1px; color:#66CC33; background:transparent; width:auto;">
-         
+           
           
-                  
-           </div>
-           </div>
+
+          </div>
+    </div>
+  
+        
            
             
-            <div class="pullit3">
+            <div>
            	<h1>Logbuch</h1>
-            <div class="maske3">
+            <div>
                   
-            <hr style="border:none; border-top:1px dashed; height:1px; color:#66CC33; background:transparent">
+                <hr></hr>
 
-            <p style="line-height:1.4; font-size:1.2em;">
-          <ol> Anfang Oktober </ol>Aufgabe 1, interaktive animierte Scheibe war am 14.10. fällig. Bewegtes Bild mit HTML und JS zum Auffrischen der alten Skills. Das Sprite-Sheet war neu für mich. HTML hat mich angeguck, als hätten wir uns noch nie gesehen. Mit Hilfe von Gemini Notebook bin ich einiger Maßen, ich würde nicht behaupten, dass es schnell ging, wieder angedockt. Ich habe ein altes Projekt herausgesucht, eine Webseite die ich mal für eine Freundin gemacht habe, um sie als Gerüst für dieses Portfolio zu verwendet. Das Skript habe ich bis Kapitel 3 gelesen. <br/>
-          <ol> Mitte Oktober </ol>Aufgabe 2- 2D Geometrie aus Linien wird am 28.10. fällig. Ich habe das Skript bis Kapitel 6 quergelesen und mit meinem 14 Jahre alten Mac gerungen, um einen lokalen Server Xampp und eine IDE (bin dran, Notepad++ sollte eigentlich als Nextpad++ seite ein paar Tagen laufen. Herunterladen konnte ich es, aber mehr auch nicht. Ich nutze grad texmaker, Firefox hat ein paar plugins bekommen. Alles läuft sehr langsam und ich muss meinen Rechner vll erst mal platt machen. 
+            <div id='logbuch'>
+                <p>
+                <ol> Anfang Oktober </ol>Aufgabe 1, interaktive animierte Scheibe war am 14.10. fällig. Bewegtes Bild mit HTML und JS zum Auffrischen der alten Skills. Das Sprite-Sheet war neu für mich. HTML hat mich angeguck, als hätten wir uns noch nie gesehen. Mit Hilfe von Gemini Notebook bin ich einiger Maßen, ich würde nicht behaupten, dass es schnell ging, wieder angedockt. Ich habe ein altes Projekt herausgesucht, eine Webseite die ich mal für eine Freundin gemacht habe, um sie als Gerüst für dieses Portfolio zu verwendet. Das Skript habe ich bis Kapitel 3 gelesen. <br/>
+                <ol> Mitte Oktober </ol>Aufgabe 2- 2D Geometrie aus Linien wird am 28.10. fällig. Ich habe das Skript bis Kapitel 6 quergelesen und mit meinem 14 Jahre alten Mac gerungen, um einen lokalen Server Xampp und eine IDE (bin dran, Notepad++ sollte eigentlich als Nextpad++ seite ein paar Tagen laufen. Herunterladen konnte ich es, aber mehr auch nicht. Ich nutze grad texmaker, Firefox hat ein paar plugins bekommen. Alles läuft sehr langsam und ich muss meinen Rechner vll erst mal platt machen. 
 				Analog habe ich habe ein Koordinatensystem aufgemalt und entschieden welche Formen ich im Anschluss generieren werde. Comming soon: ein Fächer eine Dreieck und das Haus vom Nikolaus.<br/>
-          <ol> Nächster Slot </ol>Hoffentlich läuft mein System dann ordentlich.<br/>
-          
-           
-            </p> 
+                <ol> Nächster Slot </ol>Hoffentlich läuft mein System dann ordentlich.<br/>
+                </p> 
+                <h2>Quellen</h2>
+                <p>
+                Farbpicker: https://www.google.com/search?client=firefox-b-d&q=farbfinder+hex<br/>
+                </p>
+            </div>
               
               <p style="line-height:1.4; font-size:1.2em;">
           		Text Loremdingsbums
@@ -185,12 +200,13 @@ ul {
               
 
         </div>
+    <div>
+    <button onclick="history.go(-1)">Zurück</button>
+    </div>
         <div id="footer">
-        	<hr style="border:none; border-top:1px dashed; height:1px; color:#66CC33; background:transparent;">
-        	
-            <div style="font-family:Arial, Helvetica, sans-serif; font-size:9px;">
-        	<p>Finden Sie die Arbeit gut?  E-Mail:<a href="mailto:marion.walinda@stud.th-luebeck.de">marion.walinda@stud.th-luebeck.de</a></p>
-        	</div> 
+            <hr></hr>
+            <p>Finden Sie die Arbeit gut? E-Mail:<a href="mailto:marion.walinda@stud.th-luebeck.de">marion.walinda@stud.th-luebeck.de</a></p>
+        </div> 
         
         
         
