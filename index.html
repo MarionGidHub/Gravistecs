@@ -71,6 +71,9 @@ div {
     font-size: 9px;
     
 }
+#zurueck {margin-left: 10px;
+          margin-top: 3em;
+}
   </style>
   
 </head>
@@ -79,18 +82,14 @@ div {
  
 <div id="wrapper" style="background-color: #fff;">
     
-	<div id="kopf">
-            
-            
-            
-	</div>
+
 
     
 <div id="content">
 
 <div>
  	
-<img src="bilder/Kaniszadreieck.png"/>
+<img src="bilder/Kaniszadreieck.png" alt="Kaniszadreieck"/>
    
 </div>
     
@@ -161,39 +160,28 @@ div {
 
             <div id='logbuch'>
                 <p>
-                <ol> Anfang Oktober </ol>Aufgabe 1, interaktive animierte Scheibe war am 14.10. fällig. Bewegtes Bild mit HTML und JS zum Auffrischen der alten Skills. Das Sprite-Sheet war neu für mich. HTML hat mich angeguck, als hätten wir uns noch nie gesehen. Mit Hilfe von Gemini Notebook bin ich einiger Maßen, ich würde nicht behaupten, dass es schnell ging, wieder angedockt. Ich habe ein altes Projekt herausgesucht, eine Webseite die ich mal für eine Freundin gemacht habe, um sie als Gerüst für dieses Portfolio zu verwendet. Das Skript habe ich bis Kapitel 3 gelesen. <br/>
-                <ol> Mitte Oktober </ol>Aufgabe 2- 2D Geometrie aus Linien wird am 28.10. fällig. Ich habe das Skript bis Kapitel 6 quergelesen und mit meinem 14 Jahre alten Mac gerungen, um einen lokalen Server Xampp und eine IDE (bin dran, Notepad++ sollte eigentlich als Nextpad++ seite ein paar Tagen laufen. Herunterladen konnte ich es, aber mehr auch nicht. Ich nutze grad texmaker, Firefox hat ein paar plugins bekommen. Alles läuft sehr langsam und ich muss meinen Rechner vll erst mal platt machen. 
-				Analog habe ich habe ein Koordinatensystem aufgemalt und entschieden welche Formen ich im Anschluss generieren werde. Comming soon: ein Fächer eine Dreieck und das Haus vom Nikolaus.<br/>
-                <ol> Nächster Slot </ol>Hoffentlich läuft mein System dann ordentlich.<br/>
+                <ol> Anfang Oktober </ol>
+                Aufgabe 1, interaktive animierte Scheibe war am 14.10. fällig. Bewegtes Bild mit HTML und JS zum Auffrischen der alten Skills. Das Sprite-Sheet war neu für mich. HTML hat mich angeguck, als hätten wir uns noch nie gesehen. Mit Hilfe von Gemini Notebook bin ich einiger Maßen, ich würde nicht behaupten, dass es schnell ging, wieder angedockt. Ich habe ein altes Projekt herausgesucht, eine Webseite die ich mal für eine Freundin gemacht habe, um sie als Gerüst für dieses Portfolio zu verwendet. Das Skript habe ich bis Kapitel 3 gelesen. <br/>
+                <ol> Mitte Oktober </ol>
+                 Aufgabe 2 – 2D-Geometrie aus Linien (Fälligkeit: 28.10.)
+Ich habe das Skript bis Kapitel 6 quergelesen und mich parallel mit meinem 14 Jahre alten Mac (Catalina, macOS 10.15.8) herumgeschlagen. Da das System unfassbar langsam war, hat es mich gute sechs Stunden gekostet, ein Update durchzuführen, Speicherplatz freizuschaufeln und die passenden Java-Versionen (JDK und JRE) zu installieren. Ursprünglich wollte ich die Software über Chip-Online beziehen, musste mir dann aber doch einen Account direkt bei Oracle erstellen – danach hat es schließlich geklappt.
+Die nächste Hürde war die Suche nach einer passenden IDE. Ich habe mich letztendlich für NetBeans 12.6 entschieden, da diese Version gut mit Java 8 harmoniert. Als lokalen Server nutze ich XAMPP; das hat mein System ohne Widerworte akzeptiert, und es läuft wunderbar. Mein Standardbrowser ist Firefox.
+Inzwischen habe ich ein analoges Koordinatensystem (x, y) erstellt und bereits ein paar Formen getestet. Coming soon unter Aufgabe 2: ein Dreieck und – wenn das funktioniert – ein Fächer. Das Haus vom Nikolaus hebe ich mir dann passenderweise für den Dezember auf.
+
+    <br/>
+                <ol> Nächster Slot </ol>
+                Hoffentlich läuft mein System dann ordentlich.<br/>
                 </p> 
-                <h2>Quellen</h2>
-                <p>
+                <p>Quellen</p>
+                <p style="font-size: 9px">
                 Farbpicker: https://www.google.com/search?client=firefox-b-d&q=farbfinder+hex<br/>
+                Kanizsa Dreieck: https://de.wikipedia.org/wiki/Scheinkonturen#/media/Datei:Scheinkonturen_Kanizsa_Dreieck.svg</br>
                 </p>
             </div>
               
-              <p style="line-height:1.4; font-size:1.2em;">
-          		Text Loremdingsbums
-              </p>
+             
               
-            <ul>
-            <li>
-                <p></p>
-				<h4>Beschreibung</h4> 
-                <ul>
-                	<li>fahren Sie ab Ortseingang in Richtung Möbel Kraft
-                    entliche Parkplätze befinden sich in unmittelbarer Nähe zur Osteopathie-Praxis</li>
-                </ul>
-            </li>
-            <li>
-            	<p></p>
-				<h4>Bramstedt</h4> 
-                <ul>
-                	<li>Ausfahrt Richtung Südstadt/ Stadtmitte/ Kurzentrum/ Möbel Kraft
-  unter der Brücke durch, dann rechts Richtung A21 abbie Osteopathie-Praxis</li>
-                </ul>
-            </li>
-            </ul>  
+ 
              
             </div>
             </div>
@@ -201,11 +189,11 @@ div {
 
         </div>
     <div>
-    <button onclick="history.go(-1)">Zurück</button>
+        <button id="zurueck" onclick="history.go(-1)">Zurück</button>
     </div>
         <div id="footer">
             <hr></hr>
-            <p>Finden Sie die Arbeit gut? E-Mail:<a href="mailto:marion.walinda@stud.th-luebeck.de">marion.walinda@stud.th-luebeck.de</a></p>
+            <p>All rights reserved</p>
         </div> 
         
         
