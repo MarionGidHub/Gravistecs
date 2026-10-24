@@ -3,121 +3,192 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Interaktiv animierter Kürbis</title>
+	<title>Aufgabe 2</title>
 	<style>
-		body { 
-			color: #ffffff;
-			/*font-family: Arial, sans-serif; 
-			text-align: center; 
-			margin-top: 45px; 
-			background-color: #000;*/
-			
-		}
+           
 
-		h1 {
-			color: #F28500;
-			/*font-family: 'gondala';
-			//src: url('fonts/gondala/Gondola_SD-webfont.ttf)
-  //font-weight: normal;
-  //font-style: normal;
-  //font-display: swap;*/
-		}
-		p {color: #F28500;
-			
-		}
-
-		/* --- Rahmen um den Kürbis --- */
-		.neuer-rahmen {
-			position: relative;
-			display: inline-block;
-			padding: 30px;
-			margin: 20px auto;
-		}
-
-		.ecke {
-			position: absolute;
-			width: 30px;
-			height: 30px;
-			z-index: 2;
-		}
+div {
+  width: 90%;           /* Das div braucht eine Breite, damit es zentriert werden kann */
+  margin-left: auto;    /* Berechnet den linken Abstand automatisch */
+  margin-right: auto;   /* Berechnet den rechten Abstand automatisch */
+    }
+    ul {
+        display: flex;       /* Richtet alle <li>-Elemente horizontal aus */
+        list-style: none;    /* Entfernt die Aufzählungspunkte (optional) */
+        padding: 0;          /* Entfernt Standard-Abstände (optional) */
+        }
+        ol {
+            font-size: 22px;
+        }
+    body {
 		
-		.top-left     { top: 0; left: 0; }
-		.top-right    { top: 0; right: 0; transform: rotate(90deg); }
-		.bottom-right { bottom: 0; right: 0; transform: rotate(180deg); }
-		.bottom-left  { bottom: 0; left: 0; transform: rotate(270deg); }
+	font-family: Arial, sans-serif; 
+	text-align: center; 
+	margin-top: 45px; 
+	background-color: #808080;
+	color: #ffffff; 
+    }
+    table { 
+    margin-top:6px; margin-bottom:7px; border-collapse:collapse; background-color: #10484a; 
+	}  
+    td  {
+      background-color: #ace4e6;  color:#000; font-weight:lighter;  padding: 10px; 
+  vertical-align: top; text-align: left;
+    }
+    hr { 
+    border:none; 
+    border-top:1px dashed; 
+    height:1px; 
+    color:#10484a; 
+    /*background:transparent*/
+    }
+        h1 {
+    color:#10484a
+    }
+    h2 {
+    color:#10484a
+    }
+    #metanavi {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    #logbuch {
+  color: black;        /* Macht den Text und die Nummern schwarz */
+  text-align: left;    /* Richtet den Text linksbündig aus */
+}
+#footer {
+    background-color:#dae6e4;        /* Macht den Text und die Nummern schwarz */
+    color:#000033;
+    text-align: left;
+    font-size: 9px;
+    
+}
+#zurueck {margin-left: 10px;
+          margin-top: 3em;
+}
+  </style>
 
-		.kante {
-			position: absolute;
-			z-index: 1;
-		}
-		.kante-top {
-			top: 0; left: 30px; right: 30px; height: 30px;
-			background: url('Bilder/kante-h.png') repeat-x;
-			
-		}
-		.kante-bottom {
-			bottom: -1px; left: 30px; right: 30px; height: 15px;
-			background: url('Bilder/kante-h.png') repeat-x;
-			
-		}
-		.kante-left {
-			top: 0px; bottom: 0px; left: 0; width: 15px;
-			background: url('Bilder/kante.png') repeat-y;
-			transform: rotate(180deg);
-		}
-		.kante-right {
-			top: 30px; bottom: 30px; right: 0; width: 15px;
-			background: url('Bilder/kante.png') repeat-y;
-			transform: rotate(0deg);
-		}
-
-		.info-box {
-			margin-top: 30px; 
-			padding: 15px; 
-			border: 1px solid #767676; 
-			background-color: #222; 
-			color: #000000;
-			display: inline-block; 
-			text-align: left;
-		}
-
-	
-		.touch-controls {
-			display: flex;
-			justify-content: center;
-			gap: 15px;
-			margin: 25px auto;
-		}
-
-		.touch-btn {
-			width: 60px;
-			height: 60px;
-			background-color: #F28500;
-			color: #000000;
-			border: none;
-			border-radius: 12px;
-			font-size: 22px;
-			font-weight: bold;
-			cursor: pointer;
-			box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
-			user-select: none;
-			touch-action: manipulation;
-		}
-
-		.touch-btn:active {
-			transform: scale(0.95);
-			background-color: #666;
-		}
-
-	
-	</style>
 </head>
 <body>
 
 	<!-- Die Canvas-Info-Box -->
 <div style="margin: 20px auto; text-align: center;">
     <h2>WebGL Prototyp</h2>
-    <canvas id="webglCanvas" width="400" height="400" style="background-color: #111; border: 2px solid #F28500;"></canvas>
+  
+     <canvas id="2dreiecke-oragnge" width="400" height="400"></canvas>
+
+  <script>
+        const canvas = document.getElementById('2dreiecke-oragnge');
+        const gl = canvas.getContext('webgl2');
+
+        if (!gl) {
+            alert('WebGL2 wird von Ihrem Browser nicht unterstützt!');
+        }
+
+        // 1. Vertex Shader (Positionierung der Punkte)
+        const vsSource = `#version 300 es
+            in vec2 a_position;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        // 2. Fragment Shader (Farbe: Orange R=1.0, G=0.5, B=0.0)
+        const fsSource = `#version 300 es
+            precision highp float;
+            out vec4 outColor;
+            void main() {
+                outColor = vec4(1.0, 0.5, 0.0, 1.0);
+            }
+        `;
+
+        // Shader kompilieren und verknüpfen Helper
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error(gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error(gl.getProgramProgramLog(program));
+        }
+
+        // 3. Geometrie (4 Punkte ergeben 2 Dreiecke mit geteilter Kante)
+        // Punkt A und B werden von beiden Dreiecken geteilt.
+        // Dreieck 1: A, B, C | Dreieck 2: A, B, D
+        const vertices = new Float32Array([
+            // Geteilte Kante (Punkt A und B)
+            0.0,  0.5,  // Punkt A (oben Mitte)
+            0.0, -0.5,  // Punkt B (unten Mitte)
+            
+            // Punkt C (für Dreieck 1 - links)
+           -0.6,  0.0,  // Punkt C
+           
+            // Punkt D (für Dreieck 2 - rechts oben versetzt, verhindert ein Viereck)
+            0.6,  0.7   // Punkt D
+        ]);
+
+        // Indizes, wie die Punkte zu Dreiecken verbunden werden
+        const indices = new Uint16Array([
+            0, 1, 2, // Erstes Dreieck: A, B, C
+            0, 1, 3  // Zweites Dreieck: A, B, D
+        ]);
+
+        // Buffers erstellen und mit Daten füllen
+        const vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+        // 4. Zeichnen (Render Loop)
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0.1, 0.1, 0.1, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(program);
+        gl.bindVertexArray(vao);
+
+        // 6 Indizes zeichnen (2 Dreiecke * 3 Punkte)
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+    </script>
+    
+</div>
+         <hr></hr>
+<div>
+<h2>Aufgaben aus dem Skript</h2>
+
+<hr></hr>
+<div>
+    <iframe src="skrips_Aufgaben/WGL_Src_minimalWebGL_A22.html" 
+            width="95%" height="300px" name="iFrameBeispiel"></iframe>
+</div>
 </div>
  <button onclick="history.go(-1)">Zurück</button>
 </body>
