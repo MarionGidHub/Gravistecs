@@ -67,7 +67,28 @@ div {
     
 }
 #zurueck {margin-left: 10px;
-          margin-top: 3em;
+          margin-top: 3em;}
+#fanCanvas {
+            background-color: #000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            size: unset;
+        }
+.controls {
+            margin-top: 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+ input[type="range"] {
+            width: 300px;
+            accent-color: #ff6600;
+        }
+#sizeSlider{accent-color: #ff6600;
+            
+        }
+        
 }
   </style>
 
@@ -78,105 +99,83 @@ div {
 <div style="margin: 20px auto; text-align: center;">
     <h2>WebGL Prototyp</h2>
   
-     <canvas id="2dreiecke-oragnge" width="400" height="400"></canvas>
+     <canvas id="fanCanvas"width="600px" height="270px"></canvas>
+ <div class="controls">
+        <label for="sizeSlider">Fächer öffnen/schließen:</label>
+        <input type="range" id="sizeSlider" min="0" max="180" value="180">
+    </div>
+ 
+    <script>
+        const canvas = document.getElementById('fanCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('sizeSlider');
 
-  <script>
-        const canvas = document.getElementById('2dreiecke-oragnge');
-        const gl = canvas.getContext('webgl2');
+        // Feste Parameter
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height;
+        const radius = 250;
+        const totalTriangles = 29;
 
-        if (!gl) {
-            alert('WebGL2 wird von Ihrem Browser nicht unterstützt!');
-        }
+        function drawFan() {
+            // Leinwand leeren
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 1. Vertex Shader (Positionierung der Punkte)
-        const vsSource = `#version 300 es
-            in vec2 a_position;
-            void main() {
-                gl_Position = vec4(a_position, 0.0, 1.0);
-            }
-        `;
+            // Aktuellen Winkel aus dem Slider auslesen (in Bogenmaß umrechnen)
+            const currentSpread = (slider.value * Math.PI) / 180;
 
-        // 2. Fragment Shader (Farbe: Orange R=1.0, G=0.5, B=0.0)
-        const fsSource = `#version 300 es
-            precision highp float;
-            out vec4 outColor;
-            void main() {
-                outColor = vec4(1.0, 0.5, 0.0, 1.0);
-            }
-        `;
-
-        // Shader kompilieren und verknüpfen Helper
-        function createShader(gl, type, source) {
-            const shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.error(gl.getShaderInfoLog(shader));
-                gl.deleteShader(shader);
-                return null;
-            }
-            return shader;
-        }
-
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            console.error(gl.getProgramProgramLog(program));
-        }
-
-        // 3. Geometrie (4 Punkte ergeben 2 Dreiecke mit geteilter Kante)
-        // Punkt A und B werden von beiden Dreiecken geteilt.
-        // Dreieck 1: A, B, C | Dreieck 2: A, B, D
-        const vertices = new Float32Array([
-            // Geteilte Kante (Punkt A und B)
-            0.0,  0.5,  // Punkt A (oben Mitte)
-            0.0, -0.5,  // Punkt B (unten Mitte)
+            // Die Mitte des Fächers zeigt strikt nach oben (1.5 * PI bzw. 270 Grad)
+            const centerAngle = 1.5 * Math.PI;
             
-            // Punkt C (für Dreieck 1 - links)
-           -0.6,  0.0,  // Punkt C
-           
-            // Punkt D (für Dreieck 2 - rechts oben versetzt, verhindert ein Viereck)
-            0.6,  0.7   // Punkt D
-        ]);
+            // Start- und Endwinkel bewegen sich symmetrisch von der Mitte weg
+            const startAngle = centerAngle - (currentSpread / 2);
+            const endAngle = centerAngle + (currentSpread / 2);
 
-        // Indizes, wie die Punkte zu Dreiecken verbunden werden
-        const indices = new Uint16Array([
-            0, 1, 2, // Erstes Dreieck: A, B, C
-            0, 1, 3  // Zweites Dreieck: A, B, D
-        ]);
+            // 1. Array für die 30 Vertices (Eckpunkte) generieren
+            const vertices = [];
+            vertices.push({ x: centerX, y: centerY }); // Index 0: Zentrum
 
-        // Buffers erstellen und mit Daten füllen
-        const vao = gl.createVertexArray();
-        gl.bindVertexArray(vao);
+            // Die restlichen Vertices berechnen
+            for (let i = 0; i < totalTriangles; i++) {
+                // Verhindert Division durch 0, falls der Fächer komplett geschlossen (0 Grad) ist
+                const ratio = totalTriangles > 1 ? i / (totalTriangles - 1) : 0;
+                const angle = startAngle + ratio * (endAngle - startAngle);
+                
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                vertices.push({ x: x, y: y });
+            }
 
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+            // 2. Die 29 Dreiecke zeichnen
+            for (let i = 1; i <= totalTriangles; i++) {
+                const v0 = vertices[0];
+                const v1 = vertices[i];
+                const v2 = vertices[i + 1];
 
-        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-        gl.enableVertexAttribArray(positionAttributeLocation);
-        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+                if (i === totalTriangles) break; 
 
-        const indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+                ctx.beginPath();
+                ctx.moveTo(v0.x, v0.y);
+                ctx.lineTo(v1.x, v1.y);
+                ctx.lineTo(v2.x, v2.y);
+                ctx.closePath();
 
-        // 4. Zeichnen (Render Loop)
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clearColor(0.1, 0.1, 0.1, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+                // Alternierende Farben
+                ctx.fillStyle = (i % 2 === 0) ? '#ff6600' : '#000000';
+                ctx.fill();
 
-        gl.useProgram(program);
-        gl.bindVertexArray(vao);
+                // Feine Trennlinie für saubere Kanten
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
 
-        // 6 Indizes zeichnen (2 Dreiecke * 3 Punkte)
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+        // Event-Listener reagiert sofort auf jede Bewegung des Sliders
+        slider.addEventListener('input', drawFan);
+
+        // Erstes Zeichnen beim Laden der Seite
+        drawFan();
     </script>
     
 </div>
