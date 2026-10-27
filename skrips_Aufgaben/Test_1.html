@@ -1,0 +1,36 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+            <title>Beispiel Rechteck</title>
+		
+		<style> 
+                       #bg-bild { 
+                position: absolute;
+                top: 00px;
+                left: 100px;
+                width: 300px;
+                height: 300px;
+                background-image: url('sis.jpg'); 
+                background-size: cover;        /* Bild füllt das Div komplett aus */
+                background-position: center;   /* Bild wird zentriert */
+            }
+            #c {
+		position:relative;
+		top:100px;
+		left:100px; 	
+		overflow:visible;
+		}
+                </style>
+    </head>
+    <body>
+        <div id="bg-bild">
+            <canvas id="c" width="100" height="100"></canvas>
+        </div>
+            <script type="text/javascript">
+                    var canvas = document.getElementById('c');
+                    var gl = canvas.getContext('experimental-webgl');
+                    gl.clearColor(0.0, 0.0, 1.0, 0.5);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+            </script>
+    </body>
+</html>
