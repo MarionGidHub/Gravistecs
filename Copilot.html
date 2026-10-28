@@ -1,0 +1,99 @@
+<!DOCTYPE html> 
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Statischer Halbkreis</title>
+	<style>
+		body {
+		
+    margin: 0;          /* Entfernt den Standard-Browser-Rand */
+    padding: 0;
+
+
+			background-color: #000;
+			color: #ffffff; 
+		}
+		
+		#fanCanvas2 {
+                        width: 100%;        /* Optional: Geht über die komplette Breite */
+                        margin-top: 0px; 
+			background-color: #000;
+                        margin-top: 0px;
+		}
+	</style>
+</head>
+<body>
+
+<div style="text-align: center;">
+    <canvas id="fanCanvas2" width="600" height="300"></canvas>
+ 
+    <script>
+        const canvas = document.getElementById('fanCanvas2');
+        const ctx = canvas.getContext('2d');
+
+        // Feste Parameter für den Halbkreis
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height - 50;
+        const radius = 150;
+        const totalTriangles = 29;
+
+        function drawFixedFan() {
+            // Ein fixer Halbkreis entspricht exakt PI (180 Grad)
+            const currentSpread = Math.PI;
+
+            // Die Mitte zeigt nach oben (270 Grad auf dem Einheitskreis)
+            const centerAngle = 1.5 * Math.PI;
+            
+            // Start bei 180 Grad (links) und Ende bei 360 Grad (rechts)
+            const startAngle = centerAngle - (currentSpread / 2);
+            const endAngle = centerAngle + (currentSpread / 2);
+
+            // 1. Array für die Eckpunkte (Vertices) generieren
+            const vertices = [];
+            vertices.push({ x: centerX, y: centerY }); // Index 0: Das Zentrum unten in der Mitte
+
+            // Die äußeren Punkte auf dem Halbkreis berechnen
+            for (let i = 0; i < totalTriangles; i++) {
+                const ratio = i / (totalTriangles - 1);
+                const angle = startAngle + ratio * (endAngle - startAngle);
+                
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                vertices.push({ x: x, y: y });
+            }
+
+            // 2. Die 29 Dreiecke zeichnen
+            for (let i = 1; i < totalTriangles; i++) {
+                const v0 = vertices[0];
+                const v1 = vertices[i];
+                const v2 = vertices[i + 1];
+
+                ctx.beginPath();
+                ctx.moveTo(v0.x, v0.y);
+                ctx.lineTo(v1.x, v1.y);
+                ctx.lineTo(v2.x, v2.y);
+                ctx.closePath();
+
+                // ALT:
+// ctx.fillStyle = (i % 2 === 0) ? '#ff6600' : '#000000';
+
+// NEU (mit 50% Transparenz / Alpha = 0.5):
+ctx.fillStyle = (i % 2 === 0) ? 'rgba(255, 102, 0, 0.5)' : 'rgba(0, 0, 0, 0.5)';
+
+
+                // Weiße Trennlinien
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+
+        // Direkt ausführen
+        drawFixedFan();
+    </script>
+</div>
+
+</body>
+</html>
