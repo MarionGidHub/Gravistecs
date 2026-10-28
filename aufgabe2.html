@@ -29,11 +29,18 @@ div {
 	color: #ffffff; 
     }
     table { 
-    margin-top:6px; margin-bottom:7px; border-collapse:collapse; background-color: #10484a; 
+    margin-top:6px; 
+    margin-bottom:7px; 
+    border-collapse:collapse; 
+    background-color: #c7c4ab; 
 	}  
     td  {
-      background-color: #ace4e6;  color:#000; font-weight:lighter;  padding: 10px; 
-  vertical-align: top; text-align: left;
+      background-color: #c7c4ab;  
+      color:#000; 
+      font-weight:lighter;  
+      padding: 10px; 
+      vertical-align: top; 
+      text-align: left;
     }
     hr { 
     border:none; 
@@ -53,7 +60,7 @@ div {
     }
     p {
     color:#10484a;
-        text-align: left;
+    text-align: left;
     }
     #metanavi {
         background-color: #fff;
@@ -67,14 +74,16 @@ div {
   text-align: left;    /* Richtet den Text linksbündig aus */
 }
 #footer {
-    background-color:#dae6e4;        /* Macht den Text und die Nummern schwarz */
+    background-color:#c7c4ab;        /* Macht den Text und die Nummern schwarz */
     color:#000033;
     text-align: left;
     font-size: 9px;
     
 }
-#zurueck {margin-left: 10px;
-          margin-top: 3em;}
+#zurueck {
+    margin-left: 10px;
+    margin-top: 3em;
+}
 #fanCanvas {
             background-color: #000;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -104,7 +113,7 @@ div {
         align-items: center;    
     }
        #skizze .bild-box {
-        background-color: #e0e0e0; 
+        background-color: #c7c4ab; 
         padding: 15px;             
         border-radius: 12px;       
         width: 380px;              
@@ -117,7 +126,7 @@ div {
         border-radius: 8px;        
     }
     .box{
-        background-color: white;
+        background-color:#c7c4ab;
         text-align: left;
         width: 75%;               
         height: auto;              
@@ -135,7 +144,7 @@ div {
 <div style="margin: 20px auto; text-align: center;">
     <h2>WebGL Prototyp</h2>
   
-     <canvas id="fanCanvas"width="600px" height="270px"></canvas>
+     <canvas id="fanCanvas"width="400px" height="270px"></canvas>
  <div class="controls">
         <label for="sizeSlider">Fächer öffnen/schließen:</label>
         <input type="range" id="sizeSlider" min="0" max="180" value="180">
@@ -143,14 +152,13 @@ div {
      
  <div class='box'>
     <h3>Der Fächer</h3>
-    <p>Der Code verbindet die beiden vorherigen Schritte (s.u.). 
-        Um diese runde Form hinzubekommen, werden 29 Dreiecke wie Kuchenstücke nebeneinandergereiht und eingefärbt. Wenn man die Tortenstücke gedanklich gegen unendlich laufen lässt – oder wahrscheinlich schon viel früher –, bekommt man theoretisch den perfekten Kreisbogen. 
+    <p> Um diese runde Form hinzubekommen, werden 29 Dreiecke wie Kuchenstücke nebeneinandergereiht und eingefärbt. Wenn man die Tortenstücke gedanklich gegen unendlich laufen lässt – oder wahrscheinlich schon viel früher –, bekommt man den perfekten Kreisbogen. 
         
 Für meine Grafikf nutze ich diese Aufteilung:
 Der Ursprung bzw. die Mitte von meinem Fächer liegt ganz unten auf dem Boden der Canvas.
 Die Spitze zeigt exakt nach oben entlang der positiven Y-Achse, was einem Winkel von 270 Grad bzw. 1,5 mal Pi entspricht.
-Damit die obere Kante auch wirklich rund wird, macht der Code Schritt für Schritt von links nach rechts über die Mathe-Befehle Math.cos (für die X-Verschiebung nach rechts und links). für den Y-Weg nach oben kommt Math.sin auf dieser Kreisbahn.
-Weil ich das im Code insgesamt 29-mal wiederhole, sieht das eigentlich eckige Dreieck plötzlich aus wie ein runder Halbkreis. 
+Damit die obere Kante auch wirklich rund wird, macht der Code Schritt für Schritt von links nach rechts über die Mathe-Befehle Math.cos (für die X-Verschiebung nach rechts und links). Für den Y-Weg nach oben kommt Math.sin auf dieser Kreisbahn.
+Das wird im Code insgesamt 29-mal wiederholt. 
 Das Ganze färbe ich dann noch abwechselnd in Schwarz und Orange ein, damit man die einzelnen Segmente richtig gut auseinanderhalten kann.</p>
 </div>
      
@@ -162,7 +170,7 @@ Das Ganze färbe ich dann noch abwechselnd in Schwarz und Orange ein, damit man 
         // Feste Parameter
         const centerX = canvas.width / 2;
         const centerY = canvas.height;
-        const radius = 250;
+        const radius = 150;
         const totalTriangles = 29;
 
         function drawFan() {
@@ -231,7 +239,7 @@ Das Ganze färbe ich dann noch abwechselnd in Schwarz und Orange ein, damit man 
 </div>
          <hr></hr>
 <div>
-<h2>Aufgaben aus dem Skript</h2>
+<h2>Übungesaufgaben</h2>
 
 <hr></hr>
 <div>
@@ -248,33 +256,24 @@ Das Ganze färbe ich dann noch abwechselnd in Schwarz und Orange ein, damit man 
             <h1>Doku</h1>
 	<div id='skizze'>
             <div class="bild-box">
-                <img src="skrips_Aufgaben/Karos.jpg"> 
-                <h3>Zu den Übungen</h3>
+                
                 <p> Um den Fächer zu erstellen habe ich die Übungen aus dem Skript mehr oder weniger gemacht
-                     
-                    Eine runde Form als Ausgangsform in 29 Segmente unterteilt.</br>
-                    
+                    Eine runde Form als Ausgangsform in 29 Segmente unterteilt.
+                    Ich habe den Code mit Copilot erstellt und in Schleifen modifiziert und getestet.</p>
+          <img src="skrips_Aufgaben/Karos.jpg">       
           <img src="skrips_Aufgaben/kreis.jpg"> 
+                <p>So ist das Prinzip.</p>
+          <img src="skrips_Aufgaben/van_skizze.png"> 
+          <p>Hier werden die Parameter die in der Abbildung oben zu sehen sind definiert.</p>
+          <img src="skrips_Aufgaben/van_parameter.png"> 
+          <p>Hier werden die Parameter die in der Abbildung oben zu sehen sind definiert.</p>
+          <img src="skrips_Aufgaben/vertices-berechnen.png"> 
+          <p>Hier werden die Vertices berechnet.</p>
+          <img src="skrips_Aufgaben/function_draw.png"> 
+          <p>Hier wird der Fächer in Abhängigkeit zum Slider gezeichnet.</p>
                         
-                    KREIS-GEOMETRIE BERECHNEN</br>
-                    const segments = 64; </br>
-                    const radius = 0.6;  </br> 
-                    const vertices = [];</br>
-                    
-                    
-        vertices.push(0.0, 0.0); // Punkt 0: Das Zentrum des Kreises</br>
-
+                  
         
-        for (let i = 0; i <= segments; i++) {</br>
-        // Winkel für das aktuelle Kreissegment (in Radiant)</br>
-        const angle = (i / segments) * 2 * Math.PI;</br>
-            
-        const x = Math.cos(angle) * radius;</br>
-        const y = Math.sin(angle) * radius;</br>
-            
-        vertices.push(x, y);</br>
-        }</br>
-        Ich habe den Code mit Copilot erstellt und in Schleifen modifiziert und getestet.
 </p>
             </div>
             </div>
