@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-strahliger Stern - Symmetrisches Meisterwerk</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            font-family: sans-serif;
+        }
+        canvas {
+            border: 1px solid #333;
+            background-color: #000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Mittelpunkt (P13)
+        const P13 = { x: 7, y: 5 };
+        
+        // Erstes inneres Quadrat (Die Achsenpunkte)
+        const P9  = { x: 8, y: 5 }; // Rechts (3 Uhr)
+        const P10 = { x: 7, y: 4 }; // Oben (12 Uhr)
+        const P11 = { x: 6, y: 5 }; // Links (9 Uhr)
+        const P12 = { x: 7, y: 6 }; // Unten (6 Uhr)
+
+        // Zweites inneres Quadrat (Um 45 Grad gedreht)
+        const d = 0.7071;
+        const P9_rot  = { x: P13.x + d, y: P13.y - d }; // Oben-Rechts (1:30 Uhr)
+        const P10_rot = { x: P13.x + d, y: P13.y + d }; // Unten-Rechts (4:30 Uhr)
+        const P11_rot = { x: P13.x - d, y: P13.y + d }; // Unten-Links (7:30 Uhr)
+        const P12_rot = { x: P13.x - d, y: P13.y - d }; // Oben-Links (10:30 Uhr)
+
+        // Die 8 Ecken des inneren Achtecks im Uhrzeigersinn geordnet
+        const O = [ P10, P9_rot, P9, P10_rot, P12, P11_rot, P11, P12_rot ];
+
+        // Konstruktion der 16 äußeren Spitzen (Wechselnd lang und kurz)
+        const outer = [];
+        const lengthLong = 5.0;  
+        const lengthShort = 4.2; 
+
+        for (let i = 0; i < 16; i++) {
+            const angle = (i * 2 * Math.PI / 16) - Math.PI / 2;
+            const dist = (i % 2 === 0) ? lengthLong : lengthShort;
+            outer.push({
+                x: P13.x + Math.cos(angle) * dist,
+                y: P13.y + Math.sin(angle) * dist
+            });
+        }
+
+        // Mapping für intuitiven Zugriff (S1 bis S16)
+        const S = {};
+        for (let i = 0; i < 16; i++) {
+            S[i + 1] = outer[i];
+        }
+
+        // Transformationsmatrix (Skalierung für das Canvas-Fenster)
+        const padding = 50;
+        const scaleX = (canvas.width - 2 * padding) / 14;
+        const scaleY = (canvas.height - 2 * padding) / 14;
+
+        function t(point) {
+            return { x: padding + point.x * scaleX, y: padding + point.y * scaleY };
+        }
+
+        function drawLine(pStart, pEnd, width, color = '#ffffff') {
+            const pt1 = t(pStart); const pt2 = t(pEnd);
+            ctx.beginPath(); ctx.moveTo(pt1.x, pt1.y); ctx.lineTo(pt2.x, pt2.y);
+            ctx.lineWidth = width; ctx.strokeStyle = color; ctx.stroke();
+        }
+
+        function fillTriangle(pA, pB, pC, color) {
+            const ptA = t(pA); const ptB = t(pB); const ptC = t(pC);
+            ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y); ctx.lineTo(ptB.x, ptB.y); ctx.lineTo(ptC.x, ptC.y);
+            ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+        }
+
+        // --- 1. Alternierende Flächen füllen (40% transparentes Weiß) ---
+                // --- 1. Neue, erweiterte flächige Gestaltung (Kristalliner Schliff) ---
+        // Wir nutzen vier verschiedene Transparenzstufen für einen 3D-Effekt
+        const tHigh   = 'rgba(255, 255, 255, 0.55)'; // Highlights
+        const tMed    = 'rgba(255, 255, 255, 0.35)'; // Standardflächen
+        const tLow    = 'rgba(255, 255, 255, 0.15)'; // Dezente Schatten
+        const tCenter = 'rgba(255, 255, 255, 0.25)'; // Innerer Kern
+
+        for (let i = 0; i < 16; i++) {
+            const currentSpike = outer[i];
+            const octLeft = O[Math.floor(i / 2)];
+            const octRight = O[(Math.floor(i / 2) + 1) % 8];
+
+            if (i % 2 === 0) {
+                // Hauptsegmente: Wechselndes Spiel aus Licht und Schatten
+                fillTriangle(currentSpike, octLeft, P13, (i % 4 === 0) ? tHigh : tLow);
+            } else {
+                // Diagonalsegmente: Erzeugen die räumliche Tiefe zu den Zwischenspitzen
+                fillTriangle(currentSpike, octRight, P13, (i % 4 === 1) ? tMed : tLow);
+            }
+        }
+
+        // Schattierung des inneren Achtecks (Zentraler Glanz)
+        for (let i = 0; i < 8; i++) {
+            if (i % 2 === 0) {
+                fillTriangle(O[i], O[(i + 1) % 8], P13, tCenter);
+            }
+        }
+
+        // --- 2. Innenlinien, Winkelhalbierende & Basiskanten (Stärke: 1.0px) ---
+        for (let i = 0; i < 16; i++) {
+            const currentSpike = outer[i];
+            const octLeft = O[Math.floor(i / 2)];
+            const octRight = O[(Math.floor(i / 2) + 1) % 8];
+            
+            drawLine(currentSpike, octLeft, 1.0);
+            drawLine(currentSpike, octRight, 1.0);
+            drawLine(octLeft, octRight, 1.0); 
+            drawLine(currentSpike, P13, 1.0); 
+        }
+
+        // --- 3. Spezifische Verbindungslinien (Stärke: 1.0px) ---
+        drawLine(S[9],  P10_rot, 1.0); // S9 nach P10_rot
+        drawLine(S[7],  P9,      1.0); // S7 nach P9
+        drawLine(S[5],  P9_rot,  1.0); // S5 nach P9_rot
+        drawLine(S[3],  P10,     1.0); // S3 nach P10
+        drawLine(S[1],  P12_rot, 1.0); // S1 nach P12_rot
+        drawLine(S[15], P11,     1.0); // S15 nach P11
+        drawLine(S[13], P11_rot, 1.0); // S13 nach P11_rot
+        drawLine(S[11], P12,     1.0); // S11 nach P12 (Vervollständigt das Muster perfekt!)
+
+        // --- 4. Inneres Achteck zeichnen (Stärke: 0.5px) ---
+        ctx.beginPath();
+        ctx.moveTo(t(O[0]).x, t(O[0]).y);
+        for (let i = 1; i < 8; i++) {
+            ctx.lineTo(t(O[i]).x, t(O[i]).y);
+        }
+        ctx.closePath();
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        // Achsenlinien durch P13 verbinden
+        for (let i = 0; i < 4; i++) {
+            drawLine(O[i], O[i + 4], 0.5);
+        }
+
+    </script>
+</body>
+</html>

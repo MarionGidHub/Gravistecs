@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL 2D Zungenspatel Simulation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: grey;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("hoody.jpg"); 
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        canvas {
+            background-color: transparent;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+            border-radius: 4px;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background-color: #343434;
+            color: white; 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        input[type=range] {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="glcanvas" width="600" height="600"></canvas>
+    
+    <div class="controls">
+        <label for="rotationSlider">Drehung: <span id="angleVal">0</span>°</label>
+        <input type="range" id="rotationSlider" min="-90" max="90" value="0" step="1">
+    </div>
+
+    <!-- Vertex Shader -->
+    <script id="vs" type="x-shader/x-vertex">#version 300 es
+        in vec2 a_position;
+        out vec2 v_localPos;
+
+        uniform vec2 u_resolution;
+        uniform vec2 u_pivot;
+        uniform float u_angle;
+        uniform int u_isDynamic;
+
+        void main() {
+            v_localPos = a_position;
+            vec2 pos = a_position;
+
+            // Nur rotieren, wenn es der dynamische Spatel ist (1)
+            // Die Dreiecksfläche (2) wird bereits fertig berechnet übergeben
+            if (u_isDynamic == 1) {
+                pos -= u_pivot;
+                float c = cos(u_angle);
+                float s = sin(u_angle);
+                pos = vec2(pos.x * c - pos.y * s, pos.x * s + pos.y * c);
+                pos += u_pivot;
+            }
+
+            vec2 zeroToOne = pos / u_resolution;
+            vec2 zeroToTwo = zeroToOne * 2.0;
+            vec2 clipSpace = zeroToTwo - 1.0;
+
+            gl_Position = vec4(clipSpace * vec2(1.0, -1.0), 0.0, 1.0);
+        }
+    </script>
+
+    <!-- Fragment Shader -->
+    <script id="fs" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+        
+        in vec2 v_localPos;
+        out vec4 outColor;
+
+        uniform vec4 u_color;
+        uniform vec2 u_pivot;
+        uniform int u_isDynamic;
+
+        float sdCapsule(vec2 p, vec2 a, vec2 b, float r) {
+            vec2 pa = p - a, ba = b - a;
+            float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+            return length(pa - ba * h) - r;
+        }
+
+        void main() {
+            // Wenn u_isDynamic == 2 ist, zeichnen wir die einfache Dreiecksfläche ohne Kapsel-SDF
+            if (u_isDynamic == 2) {
+                outColor = u_color;
+                return;
+            }
+
+            // Für die Spatel nutzen wir deine funktionierende Kapselberechnung
+            vec2 b = vec2(u_pivot.x, u_pivot.y + 15.0); 
+            vec2 a = vec2(u_pivot.x, u_pivot.y - 195.0); 
+            float radius = 20.0;
+
+            float dist = sdCapsule(v_localPos, a, b, radius);
+
+            if (dist > 0.0) {
+                discard; 
+            }
+            
+            float alpha = smoothstep(0.0, -1.0, dist);
+            outColor = vec4(u_color.rgb, u_color.a * alpha);
+        }
+    </script>
+
+    <!-- WebGL JavaScript Code -->
+    <script>
+        const canvas = document.getElementById("glcanvas");
+        const gl = canvas.getContext("webgl2", { premultipliedAlpha: false }) || 
+                   canvas.getContext("experimental-webgl2", { premultipliedAlpha: false });
+
+        if (!gl) {
+            alert("WebGL 2.0 wird von deinem Browser nicht unterstützt!");
+        }
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error(gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vsSource = document.getElementById("vs").text;
+        const fsSource = document.getElementById("fs").text;
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+        const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+        const pivotUniformLocation = gl.getUniformLocation(program, "u_pivot");
+        const angleUniformLocation = gl.getUniformLocation(program, "u_angle");
+        const isDynamicUniformLocation = gl.getUniformLocation(program, "u_isDynamic");
+        const colorUniformLocation = gl.getUniformLocation(program, "u_color");
+
+        // Geometriedaten aus deinem Basiscode
+        const xStart = 300 - 20; 
+        const xEnd = 300 + 20;
+        const yStart = 300 - 125;
+        const yEnd = 300 + 125;
+
+        const pivotX = 300;
+        const pivotY = yEnd - 35; // 390px
+
+        // Der obere Kreismittelpunkt des statischen Spatels (Ankerpunkt 2 für das Dreieck)
+        const staticTopX = 300;
+        const staticTopY = pivotY - 195; // 195px
+
+        const vertices = new Float32Array([
+            xStart, yStart,
+            xEnd, yStart,
+            xStart, yEnd,
+            xStart, yEnd,
+            xEnd, yStart,
+            xEnd, yEnd,
+        ]);
+
+        // VAO & Buffer für Spatel
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Separater Buffer und VAO für das dynamische Messdreieck
+        const triangleBuffer = gl.createBuffer();
+        const triangleVao = gl.createVertexArray();
+        gl.bindVertexArray(triangleVao);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        let currentAngleInRadians = 0;
+        const slider = document.getElementById("rotationSlider");
+        const angleValDisplay = document.getElementById("angleVal");
+
+        slider.addEventListener("input", (e) => {
+            const angleInDegrees = parseInt(e.target.value);
+            angleValDisplay.textContent = angleInDegrees;
+            currentAngleInRadians = (angleInDegrees * Math.PI) / 180;
+            drawScene();
+        });
+
+        function drawScene() {
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            gl.clearColor(0.0, 0.0, 0.0, 0.5);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            gl.useProgram(program);
+
+            gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+            gl.uniform2f(pivotUniformLocation, pivotX, pivotY);
+
+            // --- 1. DREIECKSFLÄCHE BERECHNEN & RENDERN ---
+            const cosA = Math.cos(currentAngleInRadians);
+            const sinA = Math.sin(currentAngleInRadians);
+            
+            // Mathematische Rotation des oberen Kreisbogens für den dynamischen Spatel in JavaScript
+            const dy = staticTopY - pivotY; // -195
+            const dynamicTopX = 0.0 * cosA - dy * sinA + pivotX;
+            const dynamicTopY = 0.0 * sinA + dy * cosA + pivotY;
+
+            const triangleVertices = new Float32Array([
+                pivotX, pivotY,
+                staticTopX, staticTopY,
+                dynamicTopX, dynamicTopY
+            ]);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.DYNAMIC_DRAW);
+
+            gl.bindVertexArray(triangleVao);
+            gl.uniform1i(isDynamicUniformLocation, 2); // Schaltet das SDF-Discard aus
+            gl.uniform4f(colorUniformLocation, 1.0, 0.85, 0.0, 0.35); // Halbtransparentes Neon-Gelb
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+
+            // --- 2. STATISCHER SPATEL ZEICHNEN ---
+            gl.bindVertexArray(vao);
+            gl.uniform1i(isDynamicUniformLocation, 0); 
+            gl.uniform1f(angleUniformLocation, 0);
+            gl.uniform4f(colorUniformLocation, 0.0, 0.75, 1.0, 0.4); // Türkis
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            // --- 3. ROTIERENDER SPATEL ZEICHNEN ---
+            gl.uniform1i(isDynamicUniformLocation, 1); 
+            gl.uniform1f(angleUniformLocation, currentAngleInRadians);
+            gl.uniform4f(colorUniformLocation, 1.0, 0.0, 0.5, 0.6); // Pink
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        drawScene();
+    </script>
+</body>
+</html>

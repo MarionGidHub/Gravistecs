@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL 2D Zungenspatel Simulation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: grey;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("hoody.jpg"); 
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        canvas {
+            background-color: transparent;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+            border-radius: 4px;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background-color: #343434;
+            color: white; 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        input[type=range] {
+            width: 300px;
+        }
+    </style>
+</head>
+
+
+    <canvas id="starCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Definition der mathematischen Punkte im 2D-Koordinatensystem
+        const P = {
+            1:  { x: 7,  y: 0 },
+            2:  { x: 10, y: 2 },
+            3:  { x: 12, y: 5 },
+            4:  { x: 10, y: 8 },
+            5:  { x: 7,  y: 10 },
+            6:  { x: 4,  y: 8 },
+            7:  { x: 2,  y: 5 },
+            8:  { x: 4,  y: 2 },
+            9:  { x: 8,  y: 5 },
+            10: { x: 7,  y: 4 },
+            11: { x: 6,  y: 5 },
+            12: { x: 7,  y: 6 },
+            13: { x: 7,  y: 5 }
+        };
+
+        // Berechnet den Schnittpunkt zweier Geraden (für G5 bis G8)
+        function intersect(p1, p2, p3, p4) {
+            const ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) /
+                       ((p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y));
+            return {
+                x: p1.x + ua * (p2.x - p1.x),
+                y: p1.y + ua * (p2.y - p1.y)
+            };
+        }
+
+        // Berechnete Schnittpunkte für die Geraden G5 bis G8 ermitteln
+        const I_1_9__3_10 = intersect(P[1], P[9], P[3], P[10]);
+        const I_3_12__5_9  = intersect(P[3], P[12], P[5], P[9]);
+        const I_5_11__7_12 = intersect(P[5], P[11], P[7], P[12]);
+        const I_1_11__7_10 = intersect(P[1], P[11], P[7], P[10]);
+
+        // Transformationsfunktion: Skaliert und spiegelt das Koordinatensystem,
+        // damit y=0 oben und y=10 unten liegt (inklusive Padding zum Rand)
+        const padding = 50;
+        const scaleX = (canvas.width - 2 * padding) / 14;
+        const scaleY = (canvas.height - 2 * padding) / 14;
+
+        function t(point) {
+            return {
+                x: padding + point.x * scaleX,
+                y: padding + point.y * scaleY
+            };
+        }
+
+        function drawLine(pStart, pEnd, width, color = '#ffffff') {
+            const pt1 = t(pStart);
+            const pt2 = t(pEnd);
+            ctx.beginPath();
+            ctx.moveTo(pt1.x, pt1.y);
+            ctx.lineTo(pt2.x, pt2.y);
+            ctx.lineWidth = width;
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+
+        function fillTriangle(pA, pB, pC, color = '#ffffff') {
+            const ptA = t(pA);
+            const ptB = t(pB);
+            const ptC = t(pC);
+            ctx.beginPath();
+            ctx.moveTo(ptA.x, ptA.y);
+            ctx.lineTo(ptB.x, ptB.y);
+            ctx.lineTo(ptC.x, ptC.y);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // --- 1. Alternierende Flächen füllen (Winkelhalbierende Spitzen S1, S3, S5, S7) ---
+        // S1 Hälften: (P1, P11, P10) und (P1, P10, P9) -> Wähle links
+        fillTriangle(P[1], P[11], P[10]);
+        // S3 Hälften: (P3, P10, P9) und (P3, P9, P12) -> Wähle oben (alternierend)
+        fillTriangle(P[3], P[10], P[9]);
+        // S5 Hälften: (P5, P9, P12) und (P5, P12, P11) -> Wähle rechts (alternierend)
+        fillTriangle(P[5], P[9], P[12]);
+        // S7 Hälften: (P7, P12, P11) und (P7, P11, P10) -> Wähle unten (alternierend)
+        fillTriangle(P[7], P[12], P[11]);
+
+
+        // --- 2. Innenlinien zeichnen (Stärke: 1.0px) ---
+        // Die Linien, welche die Spitzen zum Inneren des Sterns hin abgrenzen
+        // Spitzen S1 bis S8 Grundlinien/Schenkel nach Innen gerichtet:
+        const innerLines = [
+            [P[10], P[9]], [P[9], P[12]], [P[12], P[11]], [P[11], P[10]], // Innerer Kern-Verbindungen
+        ];
+        innerLines.forEach(line => drawLine(line[0], line[1], 1.0));
+
+        // Geraden G1 bis P4
+        drawLine(P[1], P[10], 1.0); // G1
+        drawLine(P[3], P[9], 1.0);  // G2
+        drawLine(P[5], P[12], 1.0); // G3
+        drawLine(P[7], P[11], 1.0); // G4
+
+        // Geraden G5 bis G8 (zu den errechneten Schnittpunkten)
+        drawLine(P[2], I_1_9__3_10, 1.0);  // G5
+        drawLine(P[4], I_3_12__5_9, 1.0);   // G6
+        drawLine(P[6], I_5_11__7_12, 1.0);  // G7
+        drawLine(P[8], I_1_11__7_10, 1.0);  // G8
+
+
+        // --- 3. Mittlere Elemente zeichnen (Stärke: 0.5px) ---
+        // Rechteck im Zentrum: P9 -> P10 -> P11 -> P12 -> P9
+        ctx.beginPath();
+        ctx.moveTo(t(P[9]).x, t(P[9]).y);
+        ctx.lineTo(t(P[10]).x, t(P[10]).y);
+        ctx.lineTo(t(P[11]).x, t(P[11]).y);
+        ctx.lineTo(t(P[12]).x, t(P[12]).y);
+        ctx.closePath();
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        // Linien M1 bis M4 zum Mittelpunkt P13
+        drawLine(P[9], P[13], 0.5);  // M1
+        drawLine(P[10], P[13], 0.5); // M2
+        drawLine(P[11], P[13], 0.5); // M3
+        drawLine(P[12], P[13], 0.5); // M4
+
+
+        // --- 4. Außenlinien zeichnen (Stärke: 1.5px) ---
+        // Die äußere Hülle des Sterns, gebildet aus den Außenkanten aller Spitzen
+        const outerContour = [
+            P[1], P[9], P[2], P[10], P[3], P[12], P[4], P[5], P[11], P[6], P[12], P[7], P[10], P[8], P[11], P[1]
+        ];
+
+        ctx.beginPath();
+        ctx.moveTo(t(outerContour[0]).x, t(outerContour[0]).y);
+        for(let i = 1; i < outerContour.length; i++) {
+            ctx.lineTo(t(outerContour[i]).x, t(outerContour[i]).y);
+        }
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+    </script>
+</body>
+</html>

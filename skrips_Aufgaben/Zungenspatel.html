@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL 2D Zungenspatel Simulation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: grey;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("hoody.jpg"); 
+        }
+        canvas {
+            background-color: transparent;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+            border-radius: 4px;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background-color: #343434;
+            color: white; 
+            padding: 5px;
+             border-radius: 8px;
+        }
+        input[type=range] {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="glcanvas" width="600" height="600"></canvas>
+    
+    <div class="controls">
+        <label for="rotationSlider">Drehung: <span id="angleVal">0</span>°</label>
+        <input type="range" id="rotationSlider" min="-90" max="90" value="0" step="1">
+    </div>
+
+    <!-- Vertex Shader -->
+    <script id="vs" type="x-shader/x-vertex">#version 300 es
+        in vec2 a_position;
+        out vec2 v_localPos;
+
+        uniform vec2 u_resolution;
+        uniform vec2 u_pivot;
+        uniform float u_angle;
+        uniform int u_isDynamic;
+
+        void main() {
+            // 1. Lokale Koordinaten für den Geometrie-Shader sichern (für die Rundung)
+            v_localPos = a_position;
+
+            vec2 pos = a_position;
+
+            // 2. Wenn es der rotierende Spatel ist, um den Angelpunkt (Pivot) drehen
+            if (u_isDynamic == 1) {
+                // Verschiebe Pivot in den Ursprung
+                pos -= u_pivot;
+                
+                // Rotationsmatrix anwenden
+                float c = cos(u_angle);
+                float s = sin(u_angle);
+                pos = vec2(pos.x * c - pos.y * s, pos.x * s + pos.y * c);
+                
+                // Zurückverschieben
+                pos += u_pivot;
+            }
+
+            // 3. Konvertierung von Pixel-Koordinaten in WebGL Clip Space (-1 bis 1)
+            vec2 zeroToOne = pos / u_resolution;
+            vec2 zeroToTwo = zeroToOne * 2.0;
+            vec2 clipSpace = zeroToTwo - 1.0;
+
+            // y-Achse flippen, damit 0 oben ist (Standard-Pixel-Layout)
+            gl_Position = vec4(clipSpace * vec2(1.0, -1.0), 0.0, 1.0);
+        }
+    </script>
+
+    <!-- Fragment Shader -->
+        <!-- Fragment Shader -->
+    <script id="fs" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+        
+        in vec2 v_localPos;
+        out vec4 outColor;
+
+        uniform vec4 u_color;
+        uniform vec2 u_pivot; // Wir übergeben den Drehpunkt, um die Kapsel relativ dazu zu zeichnen
+
+        // Distanzfunktion für eine Kapsel (Spatelform)
+        float sdCapsule(vec2 p, vec2 a, vec2 b, float r) {
+            vec2 pa = p - a, ba = b - a;
+            float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+            return length(pa - ba * h) - r;
+        }
+
+        void main() {
+            // Die Kapsel wird jetzt relativ zum Angelpunkt (u_pivot) konstruiert:
+            // Der Spatel ist 250px lang, der Radius ist 20px (Breite 40px).
+            // Der Angelpunkt liegt 35px über dem unteren Ende.
+            
+            // Unterer Kreismittelpunkt (35px unter dem Pivot)
+            vec2 b = vec2(u_pivot.x, u_pivot.y + 15.0); 
+            // Oberer Kreismittelpunkt (250px - 35px = 215px oberhalb vom Pivot)
+            vec2 a = vec2(u_pivot.x, u_pivot.y - 195.0); 
+            
+            float radius = 20.0;
+
+            // Berechne Abstand des aktuellen Pixels zur Kapselform
+            float dist = sdCapsule(v_localPos, a, b, radius);
+
+            // Antialiasing / Glättung der Kanten
+            if (dist > 0.0) {
+                discard; // Pixel außerhalb des Spatels unsichtbar machen
+            }
+            
+            float alpha = smoothstep(0.0, -1.0, dist);
+            outColor = vec4(u_color.rgb, u_color.a * alpha);
+        }
+    </script>
+
+
+    <!-- WebGL JavaScript Code -->
+    <script>
+        
+        // ÄNDERE DIESE ZEILEN:
+const canvas = document.getElementById("glcanvas");
+const gl = canvas.getContext("webgl2", { premultipliedAlpha: false }) || 
+           canvas.getContext("experimental-webgl2", { premultipliedAlpha: false });
+
+        
+
+        if (!gl) {
+            alert("WebGL 2.0 wird von deinem Browser nicht unterstützt!");
+        }
+
+        // Shader kompilieren Hilfsfunktion
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error(gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        // Programm linken
+        const vsSource = document.getElementById("vs").text;
+        const fsSource = document.getElementById("fs").text;
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error(gl.getProgramInfoLog(program));
+        }
+
+        // Lookups für Attribute und Uniforms
+        const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+        const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+        const pivotUniformLocation = gl.getUniformLocation(program, "u_pivot");
+        const angleUniformLocation = gl.getUniformLocation(program, "u_angle");
+        const isDynamicUniformLocation = gl.getUniformLocation(program, "u_isDynamic");
+        const colorUniformLocation = gl.getUniformLocation(program, "u_color");
+
+        // Vertex-Daten für das Rechteck (Bounding Box des Spatels: 40px breit, 250px lang)
+        // Wir platzieren ihn zentriert auf der X-Achse des Canvas (Breite 600px -> Mitte ist bei X=300, Spatel von 280 bis 320)
+        // Auf der Y-Achse platzieren wir ihn mittig (von 175px bis 425px)
+        const xStart = 300 - 20; 
+        const xEnd = 300 + 20;
+        const yStart = 300 - 125;
+        const yEnd = 300 + 125;
+
+        // Der Angelpunkt (Pivot) liegt laut Wunsch mittig (X=300) und 35px oberhalb der unteren Vertices (Y = yEnd - 35)
+        const pivotX = 300;
+        const pivotY = yEnd - 35;
+
+        // Vertices für 2 Dreiecke (Quad), das den Spatel aufspannt
+        const vertices = new Float32Array([
+            xStart, yStart,
+            xEnd, yStart,
+            xStart, yEnd,
+            xStart, yEnd,
+            xEnd, yStart,
+            xEnd, yEnd,
+        ]);
+
+        // Buffer erstellen und füllen
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // State & Slider Steuerung
+        let currentAngleInRadians = 0;
+        const slider = document.getElementById("rotationSlider");
+        const angleValDisplay = document.getElementById("angleVal");
+
+        slider.addEventListener("input", (e) => {
+            const angleInDegrees = parseInt(e.target.value);
+            angleValDisplay.textContent = angleInDegrees;
+            currentAngleInRadians = (angleInDegrees * Math.PI) / 180;
+            drawScene();
+        });
+
+        // Zeichen-Funktion
+        function drawScene() {
+            // Canvas leeren
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            gl.clearColor(0.0, 0.0, 0.0, 0.5);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // Shader-Programm aktivieren
+            gl.useProgram(program);
+            gl.bindVertexArray(vao);
+
+            // Globale Uniforms setzen
+            gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+            gl.uniform2f(pivotUniformLocation, pivotX, pivotY);
+
+            // --- 1. STATISCHER SPATEL ZEICHNEN (Holz-Look / Braun) ---
+            gl.uniform1i(isDynamicUniformLocation, 0); 
+gl.uniform1f(angleUniformLocation, 0);
+// Farbe: Ein helles Neon-Blau mit 0.4 (40%) Transparenz
+gl.uniform4f(colorUniformLocation, 0.0, 0.75, 1.0, 0.4); 
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+// --- 2. ROTIERENDER SPATEL (Neon-Pink/Magenta, liegt darüber) ---
+gl.uniform1i(isDynamicUniformLocation, 1); 
+gl.uniform1f(angleUniformLocation, currentAngleInRadians);
+// Farbe: Ein kräftiges Neon-Pink mit 0.6 (60%) Transparenz
+gl.uniform4f(colorUniformLocation, 1.0, 0.0, 0.5, 0.6); 
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        // Initiales Zeichnen beim Laden der Seite
+        drawScene();
+    </script>
+</body>
+</html>

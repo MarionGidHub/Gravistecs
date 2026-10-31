@@ -1,0 +1,351 @@
+<!DOCTYPE html> 
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Aufgabe 3</title>
+	<style>
+           
+
+div {
+  width: 90%;           /* Das div braucht eine Breite, damit es zentriert werden kann */
+  margin-left: auto;    /* Berechnet den linken Abstand automatisch */
+  margin-right: auto;   /* Berechnet den rechten Abstand automatisch */
+    }
+    ul {
+        display: flex;       /* Richtet alle <li>-Elemente horizontal aus */
+        list-style: none;    /* Entfernt die Aufzählungspunkte (optional) */
+        padding: 0;          /* Entfernt Standard-Abstände (optional) */
+        }
+        ol {
+            font-size: 22px;
+        }
+    body {
+		
+	font-family: Arial, sans-serif; 
+	text-align: center; 
+	margin-top: 45px; 
+	background-color: #808080;
+	color: #ffffff; 
+    }
+    table { 
+    margin-top:6px; 
+    margin-bottom:7px; 
+    border-collapse:collapse; 
+    background-color: #c7c4ab; 
+	}  
+    td  {
+      background-color: #c7c4ab;  
+      color:#000; 
+      font-weight:lighter;  
+      padding: 10px; 
+      vertical-align: top; 
+      text-align: left;
+    }
+    hr { 
+    border:none; 
+    border-top:1px dashed; 
+    height:1px; 
+    color:#10484a; 
+    /*background:transparent*/
+    }
+        h1 {
+    color:#10484a
+    }
+    h2 {
+    color:#10484a
+    }
+    h3 {
+    color:#10484a
+    }
+    p {
+    color:#10484a;
+    text-align: left;
+    }
+    #metanavi {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    #logbuch {
+  color: black;        /* Macht den Text und die Nummern schwarz */
+  text-align: left;    /* Richtet den Text linksbündig aus */
+}
+#footer {
+    background-color:#c7c4ab;        /* Macht den Text und die Nummern schwarz */
+    color:#000033;
+    text-align: left;
+    font-size: 9px;
+    
+}
+#zurueck {
+    margin-left: 10px;
+    margin-top: 3em;
+}
+#starCanvas {
+            background-color: #000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            size: unset;
+        }
+/*.controls {
+            margin-top: 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+ input[type="range"] {
+            width: 300px;
+            accent-color: #ff6600;
+        }
+#sizeSlider{accent-color: #ff6600;
+            
+        }*/
+ #skizze{
+        display: flex;
+        flex-direction: column; 
+        gap: 25px;              
+        padding: 0;
+        margin: 20px auto;
+        align-items: center;
+        
+    }
+       #skizze .bild-box {
+        background-color: #c7c4ab; 
+        padding: 15px;             
+        border-radius: 12px;       
+        width: 600px;              
+        box-sizing: border-box;    
+    }
+    #skizze img {
+        width: 100%;               
+        height: auto;              
+        display: block;
+        border-radius: 8px;        
+    }
+    .box{
+        background-color:#c7c4ab;
+        text-align: left;
+        width: 75%;               
+        height: auto;              
+        display: block;
+        border-radius: 8px;
+        border-color: white;
+        margin: auto;
+        padding: 10px;
+    }
+    iframe { 
+            border: 1px; 
+            border-radius: 8px;
+            hight: 600px;
+            
+        
+    }
+  </style>
+
+</head>
+<body>
+
+	<!-- Die Canvas-Info-Box -->
+<div style="margin: 20px auto; text-align: center;">
+    <h2>Aufgabe 3: Flächen mit webGL </h2>
+  
+    <canvas id="starCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Mittelpunkt (P13)
+        const P13 = { x: 7, y: 5 };
+        
+        // Erstes inneres Quadrat (Die Achsenpunkte)
+        const P9  = { x: 8, y: 5 }; // Rechts (3 Uhr)
+        const P10 = { x: 7, y: 4 }; // Oben (12 Uhr)
+        const P11 = { x: 6, y: 5 }; // Links (9 Uhr)
+        const P12 = { x: 7, y: 6 }; // Unten (6 Uhr)
+
+        // Zweites inneres Quadrat (Um 45 Grad gedreht)
+        const d = 0.7071;
+        const P9_rot  = { x: P13.x + d, y: P13.y - d }; // Oben-Rechts (1:30 Uhr)
+        const P10_rot = { x: P13.x + d, y: P13.y + d }; // Unten-Rechts (4:30 Uhr)
+        const P11_rot = { x: P13.x - d, y: P13.y + d }; // Unten-Links (7:30 Uhr)
+        const P12_rot = { x: P13.x - d, y: P13.y - d }; // Oben-Links (10:30 Uhr)
+
+        // Die 8 Ecken des inneren Achtecks im Uhrzeigersinn geordnet
+        const O = [ P10, P9_rot, P9, P10_rot, P12, P11_rot, P11, P12_rot ];
+
+        // Konstruktion der 16 äußeren Spitzen (Wechselnd lang und kurz)
+        const outer = [];
+        const lengthLong = 5.0;  
+        const lengthShort = 4.2; 
+
+        for (let i = 0; i < 16; i++) {
+            const angle = (i * 2 * Math.PI / 16) - Math.PI / 2;
+            const dist = (i % 2 === 0) ? lengthLong : lengthShort;
+            outer.push({
+                x: P13.x + Math.cos(angle) * dist,
+                y: P13.y + Math.sin(angle) * dist
+            });
+        }
+
+        // Mapping für intuitiven Zugriff (S1 bis S16)
+        const S = {};
+        for (let i = 0; i < 16; i++) {
+            S[i + 1] = outer[i];
+        }
+
+        // Transformationsmatrix (Skalierung für das Canvas-Fenster)
+        const padding = 50;
+        const scaleX = (canvas.width - 2 * padding) / 14;
+        const scaleY = (canvas.height - 2 * padding) / 14;
+
+        function t(point) {
+            return { x: padding + point.x * scaleX, y: padding + point.y * scaleY };
+        }
+
+        function drawLine(pStart, pEnd, width, color = '#ffffff') {
+            const pt1 = t(pStart); const pt2 = t(pEnd);
+            ctx.beginPath(); ctx.moveTo(pt1.x, pt1.y); ctx.lineTo(pt2.x, pt2.y);
+            ctx.lineWidth = width; ctx.strokeStyle = color; ctx.stroke();
+        }
+
+        function fillTriangle(pA, pB, pC, color) {
+            const ptA = t(pA); const ptB = t(pB); const ptC = t(pC);
+            ctx.beginPath(); ctx.moveTo(ptA.x, ptA.y); ctx.lineTo(ptB.x, ptB.y); ctx.lineTo(ptC.x, ptC.y);
+            ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+        }
+
+        // --- 1. Alternierende Flächen füllen (40% transparentes Weiß) ---
+                // --- 1. Neue, erweiterte flächige Gestaltung (Kristalliner Schliff) ---
+        // Wir nutzen vier verschiedene Transparenzstufen für einen 3D-Effekt
+        const tHigh   = 'rgba(255, 255, 255, 0.55)'; // Highlights
+        const tMed    = 'rgba(255, 255, 255, 0.35)'; // Standardflächen
+        const tLow    = 'rgba(255, 255, 255, 0.15)'; // Dezente Schatten
+        const tCenter = 'rgba(255, 255, 255, 0.25)'; // Innerer Kern
+
+        for (let i = 0; i < 16; i++) {
+            const currentSpike = outer[i];
+            const octLeft = O[Math.floor(i / 2)];
+            const octRight = O[(Math.floor(i / 2) + 1) % 8];
+
+            if (i % 2 === 0) {
+                // Hauptsegmente: Wechselndes Spiel aus Licht und Schatten
+                fillTriangle(currentSpike, octLeft, P13, (i % 4 === 0) ? tHigh : tLow);
+            } else {
+                // Diagonalsegmente: Erzeugen die räumliche Tiefe zu den Zwischenspitzen
+                fillTriangle(currentSpike, octRight, P13, (i % 4 === 1) ? tMed : tLow);
+            }
+        }
+
+        // Schattierung des inneren Achtecks (Zentraler Glanz)
+        for (let i = 0; i < 8; i++) {
+            if (i % 2 === 0) {
+                fillTriangle(O[i], O[(i + 1) % 8], P13, tCenter);
+            }
+        }
+
+        // --- 2. Innenlinien, Winkelhalbierende & Basiskanten (Stärke: 1.0px) ---
+        for (let i = 0; i < 16; i++) {
+            const currentSpike = outer[i];
+            const octLeft = O[Math.floor(i / 2)];
+            const octRight = O[(Math.floor(i / 2) + 1) % 8];
+            
+            drawLine(currentSpike, octLeft, 1.0);
+            drawLine(currentSpike, octRight, 1.0);
+            drawLine(octLeft, octRight, 1.0); 
+            drawLine(currentSpike, P13, 1.0); 
+        }
+
+        // --- 3. Spezifische Verbindungslinien (Stärke: 1.0px) ---
+        drawLine(S[9],  P10_rot, 1.0); // S9 nach P10_rot
+        drawLine(S[7],  P9,      1.0); // S7 nach P9
+        drawLine(S[5],  P9_rot,  1.0); // S5 nach P9_rot
+        drawLine(S[3],  P10,     1.0); // S3 nach P10
+        drawLine(S[1],  P12_rot, 1.0); // S1 nach P12_rot
+        drawLine(S[15], P11,     1.0); // S15 nach P11
+        drawLine(S[13], P11_rot, 1.0); // S13 nach P11_rot
+        drawLine(S[11], P12,     1.0); // S11 nach P12 (Vervollständigt das Muster perfekt!)
+
+        // --- 4. Inneres Achteck zeichnen (Stärke: 0.5px) ---
+        ctx.beginPath();
+        ctx.moveTo(t(O[0]).x, t(O[0]).y);
+        for (let i = 1; i < 8; i++) {
+            ctx.lineTo(t(O[i]).x, t(O[i]).y);
+        }
+        ctx.closePath();
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        // Achsenlinien durch P13 verbinden
+        for (let i = 0; i < 4; i++) {
+            drawLine(O[i], O[i + 4], 0.5);
+        }
+
+    </script>
+    
+ <div class='box'>
+    <h3>Der Stern</h3>
+    <p>  
+
+    </p>
+</div>
+     
+    
+    
+</div>
+         <hr></hr>
+<div>
+<h2>Übungesaufgaben</h2>
+
+<hr></hr>
+<div>
+    
+    <iframe src="skrips_Aufgaben/Zungenspatel.html" 
+            width="600px" height="680px" name="iFrameBeispiel"></iframe>
+   
+
+</div>
+
+ <div>
+            <h1>Doku</h1>
+	<div id='skizze'>
+            <div class="bild-box">
+                
+                <p> Um einen Stern zu erstellen habe ich eine Skizze angefertigt und die Koordinaten ermittelt.
+                    </p>
+          <img src="skrips_Aufgaben/Stern_Skizze.png"> 
+          <img src="skrips_Aufgaben/Scrennshot1_Stern.png">  
+          <img src="skrips_Aufgaben/Scrennshot2_Stern.png">    
+           
+                <p>Hier gab es im ersten Durchlauf einen Fehlen.</p>
+         <img src="skrips_Aufgaben/Screenshot1_constOuter.png"> 
+         <p>im Array waren die Punkte für die Spitze S4 inkorrekt.</p>
+          <img src="skrips_Aufgaben/Screenshot3_constOuter.png"> 
+          <p>Nach der Korrektur des Arrays war alles gut und die Methode ctx.stroke() kann den Pfad Punkt für Punkt richtig abgelaufen und erzeugen.</p>
+         <img src="skrips_Aufgaben/Screenshot2_constOuter.png"> 
+         <p>Erweiterung der Form-höherte Komplexitat unter zur Hilfenahme von Sinus fürt zu einem nicht erwünschten Ergebnis</p>
+         <img src="skrips_Aufgaben/Screenshot_Stern_falsch.png"> 
+         <p>Statt einer Sinus-Funktion wird zuerst das innere Rechteck dahingehend modufiziert, dass zwei Qudrate die an der selben Position liegen um 45 grad zueinander gedreht werden. Dann die räumlich nächstliegenden Punkte durch eine äußere Kontur miteinander verbinden und nach dem Schema der ersten Aufgabe abwechselnd die Eckpunkte des Achtecks mit den äußeren Punkten der Spitzen verbinden bzw. deren Schnittpunkte verwenden und an die Winkelhalbierenden denken.</p>
+         <img src="skrips_Aufgaben/Screenshaot_Stern_negativ.png"> 
+         <p>Wir verzichten auf die linien, die die äußeren Eckpunkte direckt miteinander verbinden. Die Vorgabe, dass die sich am nächsten liegenden Punkte verbunden werden sollen, gilt nur für das innere 8-Eck. Und in dem Achteck bitte nur die Linien einblenden, die durch den Mittelpunkt(P13) laufen und die sich gegebüberliegenden Eckpunkte des 8-Ecks miteinander verbinden.</p>
+         <img src="skrips_Aufgaben/Screenshat_Stern_fast.png"> 
+         <p>Fast geschafft. Nun noch die fehlenden Linien im code S9 nach P10_rot, S7 nach P9, S5 nach P9_rot, S3 nach P10, S1 nach P12_rot, S15 nach P11, S13 nach P11_rot</p>
+         <img src="skrips_Aufgaben/Screenshot_SternPunkte.png">                
+                  
+        
+</p>
+            </div>
+            </div>
+    
+</div>
+
+
+</div>
+ <button onclick="history.go(-1)">Zurück</button>
+</body>
+</html>
