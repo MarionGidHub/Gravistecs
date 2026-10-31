@@ -26,43 +26,72 @@ div {
             font-size: 22px;
         }
     body {
-		
+	background-image: url("skrips_Aufgaben/Chamel.PNG");
+        background-repeat: no-repeat; 
 	font-family: Arial, sans-serif; 
 	text-align: center; 
 	margin-top: 45px; 
-	background-color: #808080;
+	background-color: #000;
 	color: #ffffff; 
     }
+    #bio{
+        border-radius: 8px; 
+        padding: 8px;
+        background-color: #5f6050;
+    }
     table { 
-    margin-top:6px; margin-bottom:7px; border-collapse:collapse; background-color: #10484a; 
+    margin-top:6px; 
+    margin-bottom:7px; 
+    border-collapse:collapse; 
+    background-color: #5f6050; 
 	}  
     td  {
-      background-color: #ace4e6;  color:#000; font-weight:lighter;  padding: 10px; 
-  vertical-align: top; text-align: left;
+    background-color: #5f6050;  
+    color:#fff; 
+    font-weight:lighter;  
+    padding: 10px; 
+    vertical-align: 
+    top; text-align: left;
     }
+    
     hr { 
     border:none; 
     border-top:1px dashed; 
-    height:1px; 
-    color:#10484a; 
+    height:2px; 
+    color:#5f6050; 
     /*background:transparent*/
     }
         h1 {
-    color:#10484a
-    }
-    h2 {
-    color:#10484a
-    }
-    #metanavi {
-        background-color: #fff;
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
+    color:#5f6050;
     }
     
+    h2 {
+    color:#fff;
+    }
+    
+   #metanavi {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    list-style: none; /* Entfernt die Standard-Aufzählungspunkte */
+    padding: 12px;       /* Entfernt den Standard-Innenabstand der Liste */
+    margin: 10px; 
+    }
+    #metanavi li {
+    background-color: #c06f51;
+    border-radius: 8px; /* Rundet die Ecken der einzelnen Listenpunkte ab */
+    padding: 8px 15px;  /* Gibt den Text-Links Platz im Button (oben/unten links/rechts) */
+}
+
+#metanavi a {
+    text-decoration: none; /* Optional: Entfernt den Unterstrich der Links */
+    color: #fff;           /* Optional: Textfarbe der Links */
+}
+    
     #logbuch {
-  color: black;        /* Macht den Text und die Nummern schwarz */
-  text-align: left;    /* Richtet den Text linksbündig aus */
+        
+         color:1.0 0.0 0.0 0.5;        /* Macht den Text und die Nummern schwarz */
+         text-align: left;    /* Richtet den Text linksbündig aus */
 }
 #footer {
     background-color:#dae6e4;        /* Macht den Text und die Nummern schwarz */
@@ -74,13 +103,14 @@ div {
 #zurueck {margin-left: 10px;
           margin-top: 3em;
 }
+ol{color: #5f6050;}
   </style>
   
 </head>
 
 <body>
  
-<div id="wrapper" style="background-color: #fff;">
+<div id="wrapper" style="background-color:0.0 0.0 0.0 0.5;">
     
 
 
@@ -89,7 +119,6 @@ div {
 
 <div>
  	
-<img src="bilder/Kaniszadreieck.png" alt="Kaniszadreieck"/>
    
 </div>
     
@@ -101,14 +130,15 @@ div {
                 <ul id="metanavi">
 			<li><a href="aufgabe1.html" alt="Link zu Aufgabe 1">Aufgabe 1</a></li>
                  	<li><a href="aufgabe2.html" alt="Link zu Aufgabe 2">Aufgabe 2</a></li>
+                        <li><a href="aufgabe3.html" alt="Link zu Aufgabe 3">Aufgabe 3</a></li>
                 </ul>
             </div>
                 
-           	<div>
+           	<div id="bio">
                     <hr></hr>
             
             <h2>Bio</h2> 
-            <hr>
+            
             <table>
             	<tr>
         		<td>1997-2001&nbsp;</td>
@@ -142,10 +172,6 @@ div {
         		<td>2021</td>
                 	<td>Geburt meiner zweiten Tochter</td>
                 </tr>
-				<tr>
-        		<td>2026</td>
-                	<td>Wiederaufnahme des Masterstudiums(crazy)</td>
-                </tr>
          	</table>
            
           
@@ -173,12 +199,12 @@ Die nächste Hürde war die Suche nach einer passenden IDE. Ich habe mich letzte
 Inzwischen habe ich ein analoges Koordinatensystem (x, y) erstellt und bereits ein paar Formen getestet. Coming soon unter Aufgabe 2: ein Dreieck und – wenn das funktioniert – ein Fächer. Das Haus vom Nikolaus hebe ich mir dann passenderweise für den Dezember auf.
 
     <br/>
-                <ol> Nächster Slot </ol>
-                Hoffentlich läuft mein System dann ordentlich.<br/>
+                <ol> Ende Oktober</ol>
+                Es geht in die nächste Runde. Aufgabe 3 ist in T -6 Tagen fällig. Es geht um die Erweiterung von Aufgabe zwei und in einem Objekt sollen Flächen gefüllt werden. Meine Systeme laufen stabil und ich fülle meine Lücken im Programmieren mit hilfe von Gemini.<br/>
                 </p> 
                 <p>Quellen</p>
                 <p style="font-size: 9px">
-                Farbpicker: https://www.google.com/search?client=firefox-b-d&q=farbfinder+hex<br/>
+                Farbpicker: https://imagecolorpicker.com/<br/>
                 Kanizsa Dreieck: https://de.wikipedia.org/wiki/Scheinkonturen#/media/Datei:Scheinkonturen_Kanizsa_Dreieck.svg</br>
                 </p>
             </div>
@@ -192,6 +218,7 @@ Inzwischen habe ich ein analoges Koordinatensystem (x, y) erstellt und bereits e
               
 
         </div>
+    
     <div>
         <button id="zurueck" onclick="history.go(-1)">Zurück</button>
     </div>
